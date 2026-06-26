@@ -1,0 +1,26 @@
+[Unit]
+Description=arXiv recommender FastAPI service (uvicorn, localhost only, fronted by nginx)
+Documentation=https://github.com/scottcampbelldata/arxiv-recommender
+After=network-online.target postgresql.service
+Wants=network-online.target postgresql.service
+
+[Service]
+Type=simple
+User=arxrec
+Group=arxrec
+WorkingDirectory=/home/arxrec/arxiv-recommender/platform
+EnvironmentFile=/home/arxrec/arxiv-recommender/platform/.env
+Environment=PYTHONUNBUFFERED=1
+Environment=OPENBLAS_NUM_THREADS=1
+ExecStart=/home/arxrec/arxiv-recommender/platform/.venv/bin/python -m uvicorn arxrec.api.main:app --host 127.0.0.1 --port ${ARXREC_API_PORT}
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=read-only
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+[Unit]
+Description=Weekly refresh of the arXiv recommender corpus and models
+Documentation=https://github.com/scottcampbelldata/arxiv-recommender
+
+[Timer]
+OnCalendar=Mon 03:30
+Persistent=true
+Unit=arxrec-refresh.service
+
+[Install]
+WantedBy=timers.target

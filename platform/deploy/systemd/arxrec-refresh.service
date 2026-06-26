@@ -1,0 +1,24 @@
+[Unit]
+Description=arXiv recommender, weekly refresh, pull OpenAlex, load Postgres, retrain
+Documentation=https://github.com/scottcampbelldata/arxiv-recommender
+After=network-online.target postgresql.service arxrec-api.service
+Wants=postgresql.service
+
+[Service]
+Type=oneshot
+User=arxrec
+Group=arxrec
+WorkingDirectory=/home/arxrec/arxiv-recommender/platform
+EnvironmentFile=/home/arxrec/arxiv-recommender/platform/.env
+Environment=PYTHONUNBUFFERED=1
+Environment=OPENBLAS_NUM_THREADS=1
+ExecStart=/home/arxrec/arxiv-recommender/platform/.venv/bin/python -m arxrec.data.openalex
+ExecStart=/home/arxrec/arxiv-recommender/platform/.venv/bin/python -m arxrec.data.loader
+ExecStart=/home/arxrec/arxiv-recommender/platform/.venv/bin/python -m arxrec.train --max-eval-seeds 2000
+ExecStartPost=/usr/bin/systemctl restart arxrec-api.service
+TimeoutStartSec=60min
+
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=read-only
+PrivateTmp=true
