@@ -12,6 +12,7 @@ WorkingDirectory=/home/arxrec/arxiv-recommender/platform
 EnvironmentFile=/home/arxrec/arxiv-recommender/platform/.env
 Environment=PYTHONUNBUFFERED=1
 Environment=OPENBLAS_NUM_THREADS=1
+Environment=HF_HOME=/home/arxrec/arxiv-recommender/platform/data/hf-cache
 ExecStart=/home/arxrec/arxiv-recommender/platform/.venv/bin/python -m arxrec.data.openalex
 ExecStart=/home/arxrec/arxiv-recommender/platform/.venv/bin/python -m arxrec.data.loader
 ExecStart=/home/arxrec/arxiv-recommender/platform/.venv/bin/python -m arxrec.train --max-eval-seeds 2000
@@ -21,4 +22,5 @@ TimeoutStartSec=60min
 NoNewPrivileges=true
 ProtectSystem=full
 ProtectHome=read-only
+ReadWritePaths=/home/arxrec/arxiv-recommender/platform/data
 PrivateTmp=true
