@@ -62,6 +62,13 @@ export function SearchBar({ onPick, picked }: Props) {
         className="mt-1.5 w-full rounded-md border border-border bg-surface px-4 py-3 font-sans text-base text-text placeholder:text-muted focus:border-accent focus:outline-none"
       />
       {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
+      {open && q.trim().length > 0 && results.length === 0 && !error && (
+        <div className="absolute left-0 right-0 z-20 mt-1 rounded-md border border-border bg-surface px-3 py-2 text-sm text-muted shadow-2xl">
+          No papers match “{q.trim()}”. Try fewer words or a topic — the corpus is
+          CS arXiv papers from 2019 on, so older classics (e.g. ResNet, the original
+          Transformer) aren’t included.
+        </div>
+      )}
       {open && results.length > 0 && (
         <div className="absolute left-0 right-0 z-20 mt-1 max-h-80 overflow-auto rounded-md border border-border bg-surface shadow-2xl">
           {results.map((p) => (
