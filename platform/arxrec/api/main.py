@@ -181,15 +181,24 @@ def healthz() -> HealthOut:
 @app.get("/papers", response_model=list[PaperOut])
 def search_papers(q: Annotated[str, Query(min_length=1, max_length=200)],
                    limit: Annotated[int, Query(ge=1, le=30)] = 12) -> list[PaperOut]:
-    pattern = f"%{q.lower()}%"
+    ql = q.lower().strip()
+    pattern = f"%{ql}%"
+    # Exact substring matches (title or author) rank first, then fuzzy trigram
+    # matches on the title so full or approximate titles still surface the
+    # closest papers instead of returning nothing. pg_trgm is enabled on the DB.
     with STATE.engine.connect() as conn:
         rows = conn.execute(
             text(
                 "SELECT paper_id FROM core.papers "
-                "WHERE lower(title) LIKE :p OR lower(authors) LIKE :p "
-                "ORDER BY cited_by_count DESC LIMIT :lim"
+                "WHERE lower(title) LIKE :p "
+                "   OR lower(authors) LIKE :p "
+                "   OR word_similarity(:q, lower(title)) > 0.3 "
+                "ORDER BY (lower(title) LIKE :p OR lower(authors) LIKE :p) DESC, "
+                "         word_similarity(:q, lower(title)) DESC, "
+                "         cited_by_count DESC "
+                "LIMIT :lim"
             ),
-            {"p": pattern, "lim": limit},
+            {"p": pattern, "q": ql, "lim": limit},
         ).fetchall()
     return [STATE.papers[int(r[0])] for r in rows if int(r[0]) in STATE.papers]
 
