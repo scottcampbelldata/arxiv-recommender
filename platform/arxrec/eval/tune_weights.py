@@ -1,11 +1,13 @@
 """Data-driven selection of the hybrid blend weights.
 
-The shipped hybrid uses hand-set weights (neural 0.45, ALS 0.35, TF-IDF 0.15,
-popularity 0.05). The evaluation shows TF-IDF is the strongest single model and
-ALS the weakest, so those weights are worth questioning empirically rather than
+The hybrid originally used hand-set weights (neural 0.45, ALS 0.35, TF-IDF 0.15,
+popularity 0.05). The evaluation showed TF-IDF was the strongest single model and
+ALS the weakest, so those weights were worth questioning empirically rather than
 defending by intuition. This module searches the weight simplex on a *held-out*
-set of seeds and returns the blend that maximises NDCG@k, alongside the
-incumbent weights' score so the change is justified by a measured delta.
+set of seeds and returns the blend that maximises NDCG@k, alongside a baseline's
+score so the change is justified by a measured delta. The search picked TF-IDF
+0.45 / neural 0.30 / ALS 0.10 / popularity 0.15, now the default in
+``arxrec.algo.hybrid``.
 
 The optimiser is pure: it consumes a per-seed candidate pool (the union of each
 model's top items, with that model's already-normalised scores) plus the

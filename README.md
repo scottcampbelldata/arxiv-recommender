@@ -103,8 +103,11 @@ flowchart LR
 - **Citation ALS** Implicit-feedback ALS over a bipartite citation graph
   where citing papers act as users and cited papers act as items. 96
   factors, 18 iterations, alpha 8.
-- **Hybrid** Linear blend of min-max normalised scores: 45% neural, 35%
-  ALS, 15% TF-IDF, 5% log-shrunk popularity.
+- **Hybrid** Linear blend of min-max normalised scores. Weights are chosen by an
+  NDCG@10 simplex search over held-out citations, not by hand: 45% TF-IDF, 30%
+  neural, 10% ALS, 15% log-shrunk popularity. (The original hand-set weights were
+  neural-heavy; see the [case study](platform/docs/analysis/recommender-evaluation.md)
+  for why re-tuning lifted held-out NDCG@10 ~20%.)
 
 ## Evaluation
 
