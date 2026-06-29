@@ -50,7 +50,14 @@ class HybridRecommender:
         self.popularity = popularity
         self.weights = np.array([w_neural, w_als, w_tfidf, w_pop], dtype=np.float64)
 
-    def similar_items(self, seed_id: int, k: int) -> RecResult:
+    def component_scores(self, seed_id: int) -> dict[str, np.ndarray]:
+        """Per-model min-max-normalised scores over all papers for one seed.
+
+        Returns the four signals the blend combines, keyed by model name. This is
+        the single source of truth for hybrid scoring: ``similar_items`` blends
+        these with ``self.weights``, and weight-tuning (``arxrec.eval.tune_weights``)
+        reuses them so the search operates on the exact production signals.
+        """
         n = self.neural.vectors.shape[0]
         # Neural cosine over all papers.
         v = self.neural.vectors
@@ -79,11 +86,16 @@ class HybridRecommender:
             # Use a log-shrunk version so a single mega-cited paper does not dominate.
             pop_scores = np.log1p(np.maximum(pop_scores, 0.0))
 
-        a = _minmax_dense(neural_scores)
-        b = _minmax_dense(als_scores)
-        c = _minmax_dense(tfidf_scores)
-        d = _minmax_dense(pop_scores)
+        return {
+            "neural": _minmax_dense(neural_scores),
+            "als": _minmax_dense(als_scores),
+            "tfidf": _minmax_dense(tfidf_scores),
+            "popularity": _minmax_dense(pop_scores),
+        }
 
+    def similar_items(self, seed_id: int, k: int) -> RecResult:
+        comp = self.component_scores(seed_id)
+        a, b, c, d = comp["neural"], comp["als"], comp["tfidf"], comp["popularity"]
         blended = (
             self.weights[0] * a
             + self.weights[1] * b

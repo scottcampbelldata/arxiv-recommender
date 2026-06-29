@@ -16,7 +16,7 @@ itself free of model objects makes it fast and unit-testable.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -48,6 +48,37 @@ class WeightSearchResult:
     @property
     def improvement(self) -> float:
         return self.best_ndcg - self.baseline_ndcg
+
+
+def build_candidates(
+    component_scores: Callable[[int], Mapping[str, np.ndarray]],
+    seeds: Sequence[int],
+    holdout: Mapping[int, set[int]],
+    *,
+    models: Sequence[str],
+    pool_per_model: int = 50,
+) -> list[SeedCandidates]:
+    """Build per-seed candidate pools from a hybrid's component scores.
+
+    For each seed the pool is the union of each model's top ``pool_per_model``
+    items (the seed itself removed). Restricting the simplex search to this pool
+    keeps it tractable while preserving every item any model ranks highly. The
+    item ids returned are 0-based row indices, matching the score arrays.
+    """
+    out: list[SeedCandidates] = []
+    for s in seeds:
+        comp = component_scores(int(s))
+        pool: set[int] = set()
+        for m in models:
+            arr = np.asarray(comp[m])
+            top = arr.shape[0] if arr.shape[0] <= pool_per_model else pool_per_model
+            idx = np.argpartition(-arr, top - 1)[:top]
+            pool.update(int(i) for i in idx)
+        pool.discard(int(s))
+        items = np.array(sorted(pool), dtype=np.int64)
+        scores = {m: np.asarray(comp[m])[items] for m in models}
+        out.append(SeedCandidates(item_ids=items, scores=scores, relevant=set(holdout.get(int(s), set()))))
+    return out
 
 
 def _ndcg_from_hits(hit_flags: np.ndarray, n_relevant: int, k: int) -> float:

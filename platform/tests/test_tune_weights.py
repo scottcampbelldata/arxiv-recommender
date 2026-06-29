@@ -7,6 +7,7 @@ import numpy as np
 from arxrec.eval.tune_weights import (
     SeedCandidates,
     blend_ndcg,
+    build_candidates,
     grid_search_weights,
 )
 
@@ -60,3 +61,25 @@ def test_grid_weights_form_a_simplex():
 
 def test_empty_candidates_score_zero():
     assert blend_ndcg([], {"good": 1.0, "bad": 0.0}, k=10) == 0.0
+
+
+def test_build_candidates_pools_top_items_and_excludes_seed():
+    # 6 papers; "a" favours low ids, "b" favours high ids.
+    scores = {
+        0: {"a": np.array([0.9, 0.8, 0.1, 0.0, 0.0, 0.0]), "b": np.array([0.0, 0.0, 0.0, 0.1, 0.8, 0.9])},
+    }
+
+    def component_scores(seed: int):
+        return scores[seed]
+
+    cands = build_candidates(
+        component_scores, [0], {0: {4}}, models=["a", "b"], pool_per_model=2
+    )
+    assert len(cands) == 1
+    c = cands[0]
+    # top-2 of a = {0,1}, top-2 of b = {4,5}; seed 0 removed -> {1,4,5}
+    assert set(c.item_ids.tolist()) == {1, 4, 5}
+    assert c.relevant == {4}
+    # scores stay aligned to item_ids
+    assert c.scores["a"].shape == c.item_ids.shape
+    assert c.scores["b"][list(c.item_ids).index(5)] == 0.9
