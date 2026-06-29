@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import type { Paper } from "@/lib/api";
+import { COLUMN_ALGORITHMS, LEADERBOARD_ORDER, ALGO_LABEL, algoColor } from "@/lib/algorithms";
 import { LEADERBOARD } from "@/lib/leaderboard";
 import { formatLift, formatMs } from "@/lib/format";
 import { AlgoColumn } from "./AlgoColumn";
@@ -12,134 +13,151 @@ import { Panel } from "./Panel";
 import { SearchBar } from "./SearchBar";
 import { SeedCard } from "./SeedCard";
 
-const COLUMNS = [
-  { algo: "hybrid", label: "Hybrid", description: "Neural + ALS + TF-IDF + popularity blend, cold-paper aware" },
-  { algo: "neural", label: "Neural", description: "MiniLM sentence-transformer over title + abstract, cosine" },
-  { algo: "tfidf", label: "Content (TF-IDF)", description: "Title + abstract + authors + topic, sparse cosine" },
-  { algo: "als", label: "Citation ALS", description: "Implicit ALS over citing -> cited edges, 96 factors" },
-];
+const by = (a: string) => LEADERBOARD.find((r) => r.algorithm === a);
 
 export function Dashboard() {
   const [paper, setPaper] = useState<Paper | null>(null);
   const [k, setK] = useState(10);
 
-  // Pick the headline metric dynamically: whichever algorithm wins on MAP@10
-  // becomes the KPI value. Falls back to a sensible default for the lift card.
-  const best = LEADERBOARD.reduce((acc, r) => (r["map@k"] > (acc?.["map@k"] ?? -1) ? r : acc), LEADERBOARD[0]);
-  const popularity = LEADERBOARD.find((r) => r.algorithm === "popularity");
-  const liftVsPop = best && popularity ? best["map@k"] / Math.max(popularity["map@k"], 1e-9) : null;
-  const totalLatency = best?.latency_p95_ms ?? 0;
+  const hybrid = by("hybrid");
+  const pop = by("popularity");
+  const mapLift = hybrid && pop ? hybrid["map@k"] / Math.max(pop["map@k"], 1e-9) : null;
+  const hitLift = hybrid && pop ? hybrid["hit_rate@k"] / Math.max(pop["hit_rate@k"], 1e-9) : null;
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="themed min-h-screen bg-bg">
       <AppHeader />
-      <main className="mx-auto max-w-shell space-y-6 px-5 py-6">
-        <div className="space-y-1.5">
-          <h1 className="text-xl font-medium text-text">
-            Find ML papers worth your time. Five algorithms, side by side.
-          </h1>
-          <p className="max-w-3xl text-sm text-muted">
-            Pick any arXiv paper from the ML / AI / NLP / CV corpus on OpenAlex. Four algorithms each
-            return their own top-{k} most-similar papers: a hybrid blend, a sentence-transformer
-            content tower, classic TF-IDF, and an ALS model fit on the citation graph. Latency
-            badges are live calls against the FastAPI service. The leaderboard at the bottom is the
-            offline evaluation with bootstrap 95% confidence intervals on every metric.
+      <main className="mx-auto max-w-shell space-y-7 px-5 py-8 sm:py-10">
+        {/* Hero — the thesis: many ways to rank "similar", one corpus. */}
+        <section className="reveal max-w-3xl">
+          <p className="text-[11px] uppercase tracking-eyebrow text-faint">
+            Paper recommender · OpenAlex computer-science corpus
           </p>
+          <h1 className="mt-3 font-display text-[2.1rem] font-medium leading-[1.08] tracking-[-0.01em] text-text sm:text-[2.75rem]">
+            Find the next paper{" "}
+            <span className="italic text-accent">worth reading.</span>
+          </h1>
+          <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted">
+            Pick any arXiv ML paper and four models return their most-similar work, side by side — a
+            tuned hybrid, a sentence-transformer, classic TF-IDF, and a citation-graph model — all
+            measured against a popularity baseline. Latency badges are live calls; the leaderboard is
+            held-out evaluation with bootstrap confidence intervals.
+          </p>
+
+          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-sm">
+            <Stat label="MAP@10" value={hybrid ? hybrid["map@k"].toFixed(3) : "—"} />
+            <Dot />
+            <Stat label="vs popularity" value={mapLift ? formatLift(mapLift) : "—"} />
+            <Dot />
+            <Stat label="p95" value={hybrid ? `${formatMs(hybrid.latency_p95_ms)} ms` : "—"} />
+            <Dot />
+            <Stat label="catalogue" value="28,436" />
+          </div>
+
+          {/* Identity legend: establishes the colour = model language up front. */}
+          <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted">
+            {LEADERBOARD_ORDER.map((key) => (
+              <li key={key} className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full" style={{ background: algoColor(key) }} aria-hidden />
+                {ALGO_LABEL[key]}
+                {key === "popularity" && <span className="text-faint">(baseline)</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <div className="reveal" style={{ animationDelay: "60ms" }}>
+          <KpiRow>
+            <KpiCard
+              label="Best MAP@10 · hybrid"
+              value={hybrid ? hybrid["map@k"].toFixed(3) : "—"}
+              accent={algoColor("hybrid")}
+              sub={mapLift ? <span><span className="text-text">{formatLift(mapLift)}</span> the popularity baseline</span> : null}
+            />
+            <KpiCard
+              label="Hit-rate@10 · hybrid"
+              value={hybrid ? hybrid["hit_rate@k"].toFixed(2) : "—"}
+              sub={hitLift ? <span>finds a held-out citation <span className="text-text">{formatLift(hitLift)}</span> as often</span> : null}
+            />
+            <KpiCard
+              label="p95 latency · hybrid"
+              value={hybrid ? formatMs(hybrid.latency_p95_ms) : "—"}
+              unit="ms"
+              sub={<span>top-10 over a 28,436-paper catalogue</span>}
+            />
+            <KpiCard
+              label="Catalogue"
+              value="28,436"
+              sub={<span>CS arXiv papers since 2019, via OpenAlex</span>}
+            />
+          </KpiRow>
         </div>
 
-        <KpiRow>
-          <KpiCard
-            label={`Best MAP@10 (${best?.algorithm ?? "-"})`}
-            value={best ? best["map@k"].toFixed(3) : "-"}
-            sub={
-              liftVsPop ? (
-                <span>
-                  <span className="text-text">{formatLift(liftVsPop)}</span> the popularity baseline
-                </span>
-              ) : null
+        <div className="reveal" style={{ animationDelay: "120ms" }}>
+          <Panel
+            eyebrow="Step 1"
+            title="Choose a seed paper"
+            subtitle="Type a title or author — the FastAPI service does the lookup."
+            right={
+              <label className="flex items-center gap-2">
+                <span className="uppercase tracking-eyebrow text-faint">top-k</span>
+                <select
+                  value={k}
+                  onChange={(e) => setK(parseInt(e.target.value, 10))}
+                  className="themed rounded-md border border-border bg-surface-2 px-2 py-1 font-mono text-text focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/40"
+                >
+                  {[5, 8, 10, 15, 20].map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              </label>
             }
-          />
-          <KpiCard
-            label="Citation graph"
-            value="46.4k"
-            unit="edges"
-            sub={<span>in-subset, citing to cited</span>}
-          />
-          <KpiCard
-            label="Best p95 latency"
-            value={formatMs(totalLatency)}
-            unit="ms"
-            sub={<span>top-10 from a 28,000-paper catalogue</span>}
-          />
-          <KpiCard
-            label="Catalogue"
-            value="28,424"
-            sub={<span>CS arXiv papers since 2019 via OpenAlex</span>}
-          />
-        </KpiRow>
+          >
+            <SearchBar onPick={setPaper} picked={paper} />
+            {paper && (
+              <div className="mt-5">
+                <SeedCard paper={paper} />
+              </div>
+            )}
+          </Panel>
+        </div>
 
-        <Panel
-          title="Seed selection"
-          subtitle="Type any title or author. The FastAPI service does the lookup."
-          right={
-            <label className="flex items-center gap-2">
-              <span className="uppercase tracking-[0.08em]">top-k</span>
-              <select
-                value={k}
-                onChange={(e) => setK(parseInt(e.target.value, 10))}
-                className="rounded-md border border-border bg-surface px-2 py-1 font-mono text-text focus:border-accent focus:outline-none"
-              >
-                {[5, 8, 10, 15, 20].map((n) => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
-            </label>
-          }
-        >
-          <SearchBar onPick={setPaper} picked={paper} />
-          {paper && (
-            <div className="mt-5">
-              <SeedCard paper={paper} />
+        <section className="reveal space-y-3" style={{ animationDelay: "180ms" }}>
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <div>
+              <div className="text-[11px] uppercase tracking-eyebrow text-faint">Step 2</div>
+              <h2 className="mt-1 font-display text-[17px] text-text">Recommendations, side by side</h2>
             </div>
-          )}
-        </Panel>
-
-        <section className="space-y-3">
-          <div className="flex items-baseline justify-between">
-            <h2 className="text-sm font-medium text-text">Recommendations, side by side</h2>
             <p className="text-xs text-muted">
-              {paper ? `For "${paper.title.slice(0, 80)}${paper.title.length > 80 ? "..." : ""}"` : "Pick a seed paper above"}
+              {paper
+                ? `for “${paper.title.slice(0, 72)}${paper.title.length > 72 ? "…" : ""}”`
+                : "pick a seed paper above"}
             </p>
           </div>
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {COLUMNS.map((c) => (
-              <AlgoColumn
-                key={c.algo}
-                paper={paper}
-                k={k}
-                algo={c.algo}
-                label={c.label}
-                description={c.description}
-              />
+          <div className="grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 xl:grid-cols-4">
+            {COLUMN_ALGORITHMS.map((c) => (
+              <AlgoColumn key={c.key} paper={paper} k={k} algo={c.key} label={c.label} description={c.description} />
             ))}
           </div>
         </section>
 
-        <Leaderboard />
+        <div className="reveal" style={{ animationDelay: "220ms" }}>
+          <Leaderboard />
+        </div>
 
-        <footer className="border-t border-border pt-6 text-xs text-muted">
+        <footer className="border-t border-border pt-6 text-xs leading-relaxed text-muted">
           <p>
-            Data: <span className="font-mono">OpenAlex</span> Computer Science works hosted on arXiv,
-            2019 onwards, citation graph included. Algorithms: popularity, TF-IDF, MiniLM
-            sentence-transformer, implicit ALS over citations, hybrid linear blend. Serving:
-            FastAPI + FAISS. Frontend: Next.js on Cloudflare Pages. Source:{" "}
+            Data: <span className="font-mono">OpenAlex</span> computer-science works on arXiv, 2019
+            onward, citation graph included. Models: popularity, TF-IDF, MiniLM sentence-transformer,
+            implicit ALS over citations, and a held-out-tuned hybrid. Serving: FastAPI + FAISS.
+            Frontend: Next.js on Cloudflare Pages.{" "}
             <a
               className="text-accent hover:underline"
               href="https://github.com/scottcampbelldata/arxiv-recommender"
               target="_blank"
               rel="noreferrer"
             >
-              github.com/scottcampbelldata/arxiv-recommender
+              Source on GitHub
             </a>
             .
           </p>
@@ -147,4 +165,17 @@ export function Dashboard() {
       </main>
     </div>
   );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <span className="flex items-baseline gap-1.5">
+      <span className="text-text">{value}</span>
+      <span className="text-faint">{label}</span>
+    </span>
+  );
+}
+
+function Dot() {
+  return <span className="text-border-strong" aria-hidden>·</span>;
 }
