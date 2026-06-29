@@ -12,9 +12,9 @@ serving, and a side-by-side dashboard.
 > 20x on MAP@10), with p95 latency under 100 ms over a 28,000-paper catalogue.
 
 **Analytical case study:**
-[platform/docs/analysis/recommender-evaluation.md](platform/docs/analysis/recommender-evaluation.md)
-— reads the evaluation and live system together and finds, among other things,
-that the production blend is weighted toward the weaker of its two content
+[platform/docs/analysis/recommender-evaluation.md](platform/docs/analysis/recommender-evaluation.md).
+It reads the evaluation and live system together and finds, among other things,
+that the production blend was weighted toward the weaker of its two content
 models. Grounded in real numbers and fully reproducible.
 
 Live demo: <https://papers.scottcampbell.io>
