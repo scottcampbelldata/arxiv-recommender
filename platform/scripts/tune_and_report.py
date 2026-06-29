@@ -3,12 +3,14 @@ against the trained models, and write a JSON report.
 
 Unlike ``arxrec.train`` this does NOT retrain: it loads the existing pickled
 models and the dataset holdout, so it is cheap to run after a normal training
-run. It answers the two questions the case study leaves open:
+run. It answers the two questions the case study leaves open, using a proper
+split: the eval seeds are partitioned into disjoint validation and test folds,
+weights are tuned on validation, and the gain is measured on test.
 
-  1. What blend weights maximise NDCG@k on held-out citations, and how much do
-     they beat the shipped weights?
-  2. Is the hybrid's accuracy gain over TF-IDF statistically significant
-     (paired bootstrap over seeds)?
+  1. What blend weights maximise NDCG@k (tuned on the validation fold), and how
+     much do they beat the original weights *out-of-sample* on the test fold?
+  2. Is the deployed hybrid's accuracy gain over TF-IDF statistically
+     significant on the test fold (paired bootstrap over seeds)?
 
 Run from ``platform`` with the project venv::
 
@@ -27,7 +29,7 @@ from arxrec.config import SETTINGS
 from arxrec.data.dataset import build_dataset
 from arxrec.eval import run_similar_items_eval
 from arxrec.eval.significance import paired_bootstrap_diff
-from arxrec.eval.tune_weights import build_candidates, grid_search_weights
+from arxrec.eval.tune_weights import blend_ndcg, build_candidates, grid_search_weights
 
 MODELS = ["neural", "als", "tfidf", "popularity"]
 # Original hand-set weights, kept as the comparison baseline so the report shows
@@ -50,27 +52,42 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=20260625)
     ap.add_argument("--step", type=float, default=0.05, help="weight-simplex grid step")
     ap.add_argument("--pool-per-model", type=int, default=50)
+    ap.add_argument("--val-frac", type=float, default=0.5, help="fraction of seeds used to tune weights")
     ap.add_argument("--out", default="data/models/tuning_report.json")
     args = ap.parse_args()
 
     ds = build_dataset(seed=args.seed)
     hybrid = _load("hybrid")
 
-    # Deterministic seed sample, shared by the search and the significance test.
+    # Deterministic seed sample, then split into disjoint validation / test folds.
+    # Weights are tuned on validation ONLY; the reported gain is measured on the
+    # held-out test fold, so it is an honest out-of-sample estimate.
     seeds = sorted(ds.test_holdout.keys())
     rng = np.random.default_rng(args.seed)
     if len(seeds) > args.max_seeds:
         seeds = sorted(int(s) for s in rng.choice(seeds, args.max_seeds, replace=False))
+    shuffled = rng.permutation(seeds)
+    n_val = int(len(shuffled) * args.val_frac)
+    val_seeds = sorted(int(s) for s in shuffled[:n_val])
+    test_seeds = sorted(int(s) for s in shuffled[n_val:])
 
-    # 1) Weight search on the held-out citation pool.
-    cands = build_candidates(
-        hybrid.component_scores, seeds, ds.test_holdout,
+    # 1) Tune weights on the VALIDATION fold.
+    val_cands = build_candidates(
+        hybrid.component_scores, val_seeds, ds.test_holdout,
         models=MODELS, pool_per_model=args.pool_per_model,
     )
-    search = grid_search_weights(cands, MODELS, baseline=SHIPPED, step=args.step, k=args.k)
+    search = grid_search_weights(val_cands, MODELS, baseline=SHIPPED, step=args.step, k=args.k)
 
-    # 2) Significance of hybrid vs TF-IDF, paired over the same seeds.
-    holdout = {s: ds.test_holdout[s] for s in seeds}
+    # 2) Measure the chosen weights on the held-out TEST fold (out-of-sample).
+    test_cands = build_candidates(
+        hybrid.component_scores, test_seeds, ds.test_holdout,
+        models=MODELS, pool_per_model=args.pool_per_model,
+    )
+    test_ndcg_original = blend_ndcg(test_cands, SHIPPED, k=args.k)
+    test_ndcg_tuned = blend_ndcg(test_cands, search.best_weights, k=args.k)
+
+    # 3) Significance of the deployed hybrid vs TF-IDF, paired over the test fold.
+    holdout = {s: ds.test_holdout[s] for s in test_seeds}
     tfidf = hybrid.tfidf
     ev_hyb = run_similar_items_eval(hybrid, holdout=holdout, n_items=ds.n_papers, k=args.k, seed=args.seed)
     ev_tf = run_similar_items_eval(tfidf, holdout=holdout, n_items=ds.n_papers, k=args.k, seed=args.seed)
@@ -78,19 +95,23 @@ def main() -> int:
 
     report = {
         "k": args.k,
-        "n_seeds": len(seeds),
+        "n_val_seeds": len(val_seeds),
+        "n_test_seeds": len(test_seeds),
         "weight_search": {
-            "shipped_weights": search.baseline_weights,
-            "shipped_ndcg": round(search.baseline_ndcg, 4),
+            "tuned_on": "validation fold",
+            "original_weights": SHIPPED,
             "best_weights": {m: round(w, 3) for m, w in search.best_weights.items()},
-            "best_ndcg": round(search.best_ndcg, 4),
-            "improvement": round(search.improvement, 4),
+            "val_ndcg_original": round(search.baseline_ndcg, 4),
+            "val_ndcg_tuned": round(search.best_ndcg, 4),
+            "test_ndcg_original": round(test_ndcg_original, 4),
+            "test_ndcg_tuned": round(test_ndcg_tuned, 4),
+            "out_of_sample_improvement": round(test_ndcg_tuned - test_ndcg_original, 4),
             "top_blends": [
-                {"weights": {m: round(w, 3) for m, w in wts.items()}, "ndcg": round(nd, 4)}
+                {"weights": {m: round(w, 3) for m, w in wts.items()}, "val_ndcg": round(nd, 4)}
                 for wts, nd in search.leaderboard
             ],
         },
-        "hybrid_vs_tfidf_ndcg": {
+        "hybrid_vs_tfidf_ndcg_testfold": {
             "hybrid_ndcg": round(ev_hyb.ndcg.value, 4),
             "tfidf_ndcg": round(ev_tf.ndcg.value, 4),
             "mean_diff": round(diff.mean_diff, 4),
