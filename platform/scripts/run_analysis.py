@@ -81,11 +81,22 @@ def fig_accuracy(lb: dict) -> None:
     fig, ax = plt.subplots(figsize=(8.6, 4.4))
     for i, algo in enumerate(ALGOS):
         vals = [rows[algo][m] for m, _ in metrics]
-        ax.bar(x + (i - 2) * width, vals, width, label=algo, color=COLORS[algo])
+        # asymmetric error bars from the bootstrap 95% CIs, when present
+        err_lo, err_hi = [], []
+        for m, _ in metrics:
+            ci = rows[algo].get(m.replace("@k", "") + "_ci")
+            if ci and ci[0] is not None and ci[1] is not None:
+                err_lo.append(rows[algo][m] - ci[0])
+                err_hi.append(ci[1] - rows[algo][m])
+            else:
+                err_lo.append(0.0)
+                err_hi.append(0.0)
+        ax.bar(x + (i - 2) * width, vals, width, label=algo, color=COLORS[algo],
+               yerr=[err_lo, err_hi], capsize=2, ecolor="#33373f", error_kw={"lw": 0.8})
     ax.set_xticks(x)
     ax.set_xticklabels([lbl for _, lbl in metrics])
     ax.set_ylabel("score")
-    ax.set_title("Accuracy on held-out citations (k=10, 2,000 seeds)")
+    ax.set_title("Accuracy on held-out citations (k=10, 2,000 seeds, 95% bootstrap CIs)")
     ax.legend(ncol=5, fontsize=9, loc="upper center", bbox_to_anchor=(0.5, -0.10), frameon=False)
     fig.savefig(FIGS / "fig1_accuracy.png")
     plt.close(fig)
@@ -125,21 +136,29 @@ def fig_overlap(sample: dict) -> np.ndarray:
     return mat
 
 
-def fig_attribution(sample: dict, lb: dict) -> dict[str, float]:
+def fig_attribution(post: dict, lb: dict, pre: dict | None) -> dict[str, dict[str, float]]:
+    """Before/after: how much the hybrid's top-10 overlaps each base model,
+    pre-tuning (neural-heavy weights) vs post-tuning (the deployed blend)."""
     bases = ["popularity", "tfidf", "neural", "als"]
-    attr = hybrid_attribution(sample["records"], "hybrid", bases)
-    weights = lb["blend_weights"]
-    fig, ax = plt.subplots(figsize=(7.8, 4.4))
+    attr_post = hybrid_attribution(post["records"], "hybrid", bases)
+    attr_pre = hybrid_attribution(pre["records"], "hybrid", bases) if pre else None
+    fig, ax = plt.subplots(figsize=(8.0, 4.4))
     x = np.arange(len(bases))
-    ax.bar(x - 0.2, [attr[b] for b in bases], 0.4, label="actual overlap with hybrid", color="#2bbf7a")
-    ax.bar(x + 0.2, [weights[b] for b in bases], 0.4, label="nominal blend weight", color="#c9ccd2")
+    if attr_pre:
+        ax.bar(x - 0.2, [attr_pre[b] for b in bases], 0.4,
+               label="before re-tuning (neural-heavy weights)", color="#c9ccd2")
+        ax.bar(x + 0.2, [attr_post[b] for b in bases], 0.4,
+               label="after re-tuning (deployed weights)", color="#2bbf7a")
+        ax.set_title("Re-tuning flipped what the hybrid follows: neural → TF-IDF")
+    else:
+        ax.bar(x, [attr_post[b] for b in bases], 0.5, label="overlap with hybrid", color="#2bbf7a")
+        ax.set_title("What the hybrid actually inherits")
     ax.set_xticks(x, bases)
-    ax.set_ylabel("share")
-    ax.set_title("What the hybrid actually inherits vs its nominal weights")
+    ax.set_ylabel("mean Jaccard overlap with hybrid top-10")
     ax.legend(frameon=False, fontsize=9)
     fig.savefig(FIGS / "fig4_hybrid_attribution.png")
     plt.close(fig)
-    return attr
+    return {"pre": attr_pre or {}, "post": attr_post}
 
 
 def fig_latency(lb: dict) -> None:
@@ -174,11 +193,13 @@ def main() -> None:
     lb, sample = _load()
     rows = _lb_map(lb)
     n_cat = sample["n_papers"]
+    pre_path = DATA / "_pretune_behavioral_sample.json"
+    pre = json.loads(pre_path.read_text()) if pre_path.exists() else None
 
     fig_accuracy(lb)
     fig_tradeoff(lb)
     mat = fig_overlap(sample)
-    attr = fig_attribution(sample, lb)
+    attr = fig_attribution(sample, lb, pre)
     fig_latency(lb)
     conc = {a: recommendation_concentration(sample["records"], a, n_cat) for a in ALGOS}
     fig_concentration(sample, conc)
@@ -194,16 +215,17 @@ def main() -> None:
         "n_warm_seeds": len(warm),
         "overlap": {f"{a}|{b}": round(float(mat[idx[a], idx[b]]), 4)
                     for a in ALGOS for b in ALGOS if idx[a] < idx[b]},
-        "hybrid_attribution": {k: round(v, 4) for k, v in attr.items()},
+        "hybrid_attribution_pre": {k: round(v, 4) for k, v in attr["pre"].items()},
+        "hybrid_attribution_post": {k: round(v, 4) for k, v in attr["post"].items()},
         "concentration": {a: {k: round(v, 6) for k, v in conc[a].items()} for a in ALGOS},
         "offline": {a: rows[a] for a in ALGOS},
         "blend_weights": lb["blend_weights"],
     }
     (DATA / "derived_stats.json").write_text(json.dumps(derived, indent=2))
     print(f"wrote 6 figures to {FIGS}")
-    print(f"wrote derived stats to {DATA / 'derived_stats.json'}")
     print(f"als|popularity overlap = {derived['overlap'].get('popularity|als')}")
-    print(f"hybrid attribution    = {derived['hybrid_attribution']}")
+    print(f"hybrid attribution pre  = {derived['hybrid_attribution_pre']}")
+    print(f"hybrid attribution post = {derived['hybrid_attribution_post']}")
 
 
 if __name__ == "__main__":
