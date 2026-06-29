@@ -110,7 +110,7 @@ export function SearchBar({ onPick, picked }: Props) {
           autoComplete="off"
           spellCheck={false}
           value={q}
-          placeholder="Title or author — e.g. transformer, Hinton, contrastive"
+          placeholder="Title or author, e.g. transformer, Hinton, contrastive"
           onChange={(e) => {
             setQ(e.target.value);
             setOpen(true);
@@ -139,7 +139,7 @@ export function SearchBar({ onPick, picked }: Props) {
 
       {showNoMatch && (
         <div className="absolute left-0 right-0 z-20 mt-1.5 rounded-lg border border-border bg-surface px-4 py-3 text-sm text-muted shadow-pop">
-          No papers match “{q.trim()}”. Try fewer words or a topic — the corpus is CS arXiv papers
+          No papers match “{q.trim()}”. Try fewer words or a topic. The corpus is CS arXiv papers
           from 2019 on, so older classics (ResNet, the original Transformer) aren’t included.
         </div>
       )}

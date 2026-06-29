@@ -1,7 +1,7 @@
 /**
  * Single source of truth for algorithm identity. Each algorithm carries a
  * persistent colour (a CSS variable defined per theme) that is reused on its
- * column, its recommendation cards, and the leaderboard charts — so colour
+ * column, its recommendation cards, and the leaderboard charts, so colour
  * encodes *which model*, not decoration.
  */
 export interface AlgoMeta {

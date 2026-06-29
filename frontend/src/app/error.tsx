@@ -7,7 +7,7 @@ export default function Error({ reset }: { error: Error & { digest?: string }; r
         <p className="text-[11px] uppercase tracking-eyebrow text-faint">Something broke</p>
         <h1 className="mt-3 font-display text-2xl text-text">The dashboard hit an error.</h1>
         <p className="mt-2 text-sm text-muted">
-          The page failed to render. The backend may be waking up — try again in a moment.
+          The page failed to render. The backend may be waking up; try again in a moment.
         </p>
         <button
           type="button"
