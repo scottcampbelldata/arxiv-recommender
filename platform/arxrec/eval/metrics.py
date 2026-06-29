@@ -25,6 +25,19 @@ def recall_at_k(recs: Iterable[int], holdout: set[int], k: int) -> float:
     return sum(1 for x in r if int(x) in holdout) / float(len(holdout))
 
 
+def hit_rate_at_k(recs: Iterable[int], holdout: set[int], k: int) -> float:
+    """1.0 if any held-out item appears in the top-k, else 0.0.
+
+    Averaged across seeds this is the "how often does the held-out cited paper
+    show up in the top-K" quantity -- the metric the project's headline claim is
+    actually about, and the one most legible to a non-specialist reader.
+    """
+    r = _to_array(recs)[:k]
+    if not holdout or len(r) == 0:
+        return 0.0
+    return 1.0 if any(int(x) in holdout for x in r) else 0.0
+
+
 def average_precision_at_k(recs: Iterable[int], holdout: set[int], k: int) -> float:
     r = _to_array(recs)[:k]
     if not holdout or len(r) == 0:

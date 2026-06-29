@@ -7,9 +7,16 @@ implicit ALS over the citation graph, and a hybrid linear blend. Held-out
 evaluation, bootstrap confidence intervals on every metric, FAISS ANN for
 serving, and a side-by-side dashboard.
 
-> **Headline:** the hybrid recommender finds the held-out cited paper in
-> the top 10 over 20x more often than a popularity baseline, with p95
-> latency under 100 ms over a 28,000-paper catalogue.
+> **Headline:** the hybrid recommender surfaces held-out cited papers in the
+> top 10 an order of magnitude more often than a popularity baseline (11x on
+> Recall@10, 17x on MAP@10), with p95 latency under 100 ms over a 28,000-paper
+> catalogue.
+
+**Analytical case study:**
+[platform/docs/analysis/recommender-evaluation.md](platform/docs/analysis/recommender-evaluation.md)
+— reads the evaluation and live system together and finds, among other things,
+that the production blend is weighted toward the weaker of its two content
+models. Grounded in real numbers and fully reproducible.
 
 Live demo: <https://papers.scottcampbell.io>
 Case study: <https://scottcampbell.io/projects/arxiv-recommender>
@@ -23,7 +30,8 @@ arxiv-recommender/
     src/components/ KpiCard, KpiRow, Panel, SearchBar, SeedCard, AlgoColumn, RecCard, Leaderboard
     src/lib/        Typed FastAPI client, formatters, baked leaderboard
   platform/         Python backend, deployed to a Linux VPS by systemd
-    arxrec/         Package: algo/, api/, data/, db/, eval/, utils/
+    arxrec/         Package: algo/, analysis/, api/, data/, db/, eval/, utils/
+    docs/analysis/  Reproducible evaluation case study, figures, derived stats
     deploy/         systemd unit files, nginx site, deploy README, DB bootstrap
     scripts/        Screenshot harness, helper utilities
     tests/          pytest + hypothesis (property tests on ranking metrics)
@@ -49,7 +57,8 @@ HTTPS. The backend serves JSON only.
 | Senior skill | Where it lives |
 |---|---|
 | Multiple recommender algorithms (popularity, TF-IDF, neural, ALS, hybrid) | `platform/arxrec/algo/` |
-| Real evaluation (P, R, MAP, NDCG, coverage, diversity, ILS, bootstrap CIs) | `platform/arxrec/eval/` |
+| Real evaluation (P, R, MAP, NDCG, hit-rate, coverage, diversity, ILS, bootstrap CIs) | `platform/arxrec/eval/` |
+| Findings-driven analysis: significance testing, blend-weight tuning, behavioural overlap/concentration | `platform/docs/analysis/`, `platform/arxrec/analysis/`, `platform/arxrec/eval/tune_weights.py` |
 | Item-to-item eval with held-out citation edges (academic-search convention) | `platform/arxrec/data/dataset.py` |
 | Cold-paper handling, hybrid blend down-weights ALS when the seed is sparse | `platform/arxrec/algo/hybrid.py` |
 | Production serving with FastAPI + FAISS ANN + request logging | `platform/arxrec/api/` |
