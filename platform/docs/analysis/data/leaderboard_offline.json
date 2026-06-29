@@ -1,13 +1,165 @@
 {
-  "_provenance": "Offline held-out citation evaluation, k=10, 2000 eval seeds, from the most recent committed training run (frontend/src/lib/leaderboard.ts). Point estimates; bootstrap CIs live in ml.eval_metric and are loaded separately when available.",
+  "_provenance": "Offline held-out citation evaluation, k=10, 2000 eval seeds, from the production retrain on 2026-06-29 with the NDCG-tuned blend weights (run_ids 11-15). Values and bootstrap 95% CIs read from ml.eval_metric; coverage/diversity/latency from leaderboard.json.",
   "k": 10,
   "n_seeds_eval": 2000,
+  "n_catalogue": 28436,
   "rows": [
-    {"algorithm": "popularity", "recall@k": 0.0320, "map@k": 0.0101, "ndcg@k": 0.0155, "precision@k": 0.0033, "coverage": 0.0004, "diversity": 0.94, "ils": 0.06, "latency_p50_ms": 0.08, "latency_p95_ms": 0.12},
-    {"algorithm": "tfidf",      "recall@k": 0.3110, "map@k": 0.1546, "ndcg@k": 0.1925, "precision@k": 0.0317, "coverage": 0.387,  "diversity": 0.87, "ils": 0.13, "latency_p50_ms": 55.4, "latency_p95_ms": 66.4},
-    {"algorithm": "neural",     "recall@k": 0.2709, "map@k": 0.1279, "ndcg@k": 0.1623, "precision@k": 0.0277, "coverage": 0.366,  "diversity": 0.87, "ils": 0.13, "latency_p50_ms": 2.91, "latency_p95_ms": 3.70},
-    {"algorithm": "als",        "recall@k": 0.1225, "map@k": 0.0392, "ndcg@k": 0.0588, "precision@k": 0.0127, "coverage": 0.184,  "diversity": 0.57, "ils": 0.43, "latency_p50_ms": 0.31, "latency_p95_ms": 0.68},
-    {"algorithm": "hybrid",     "recall@k": 0.3465, "map@k": 0.1665, "ndcg@k": 0.2101, "precision@k": 0.0353, "coverage": 0.333,  "diversity": 0.56, "ils": 0.44, "latency_p50_ms": 61.2, "latency_p95_ms": 75.4}
+    {
+      "algorithm": "popularity",
+      "recall@k": 0.0293,
+      "recall_ci": [
+        0.021915624999999998,
+        0.03666875000000001
+      ],
+      "map@k": 0.0098,
+      "map_ci": [
+        0.006967410714285714,
+        0.01287936755952381
+      ],
+      "ndcg@k": 0.0147,
+      "ndcg_ci": [
+        0.0109048120439681,
+        0.018552753090905885
+      ],
+      "hit_rate@k": 0.031,
+      "hit_rate_ci": [
+        0.024,
+        0.039
+      ],
+      "precision@k": 0.0031000000000000003,
+      "coverage": 0.0004,
+      "diversity": 0.9572,
+      "ils": 0.0428,
+      "latency_p50_ms": 0.15471899678232148,
+      "latency_p95_ms": 0.19531604484654963
+    },
+    {
+      "algorithm": "tfidf",
+      "recall@k": 0.307,
+      "recall_ci": [
+        0.286875,
+        0.32879479166666664
+      ],
+      "map@k": 0.1491,
+      "map_ci": [
+        0.13664828869047618,
+        0.16124336061507938
+      ],
+      "ndcg@k": 0.1872,
+      "ndcg_ci": [
+        0.17485673540767652,
+        0.20068162598862685
+      ],
+      "hit_rate@k": 0.312,
+      "hit_rate_ci": [
+        0.29298749999999996,
+        0.331
+      ],
+      "precision@k": 0.031450000000000006,
+      "coverage": 0.3862,
+      "diversity": 0.8703,
+      "ils": 0.1297,
+      "latency_p50_ms": 46.51005149935372,
+      "latency_p95_ms": 52.98735100441263
+    },
+    {
+      "algorithm": "als",
+      "recall@k": 0.1275,
+      "recall_ci": [
+        0.113,
+        0.14187708333333332
+      ],
+      "map@k": 0.0513,
+      "map_ci": [
+        0.042998365575396824,
+        0.05915532986111111
+      ],
+      "ndcg@k": 0.0694,
+      "ndcg_ci": [
+        0.061197955334019026,
+        0.07871313959694133
+      ],
+      "hit_rate@k": 0.1325,
+      "hit_rate_ci": [
+        0.1185,
+        0.1475
+      ],
+      "precision@k": 0.013300000000000001,
+      "coverage": 0.181,
+      "diversity": 0.5803,
+      "ils": 0.4197,
+      "latency_p50_ms": 0.3503004991216585,
+      "latency_p95_ms": 0.7349918450927361
+    },
+    {
+      "algorithm": "neural",
+      "recall@k": 0.2659,
+      "recall_ci": [
+        0.24791458333333333,
+        0.2852125
+      ],
+      "map@k": 0.1214,
+      "map_ci": [
+        0.11014212797619047,
+        0.13201563988095238
+      ],
+      "ndcg@k": 0.156,
+      "ndcg_ci": [
+        0.14412951997776888,
+        0.16910949176121287
+      ],
+      "hit_rate@k": 0.271,
+      "hit_rate_ci": [
+        0.2519875,
+        0.29
+      ],
+      "precision@k": 0.02725,
+      "coverage": 0.3664,
+      "diversity": 0.8685,
+      "ils": 0.1315,
+      "latency_p50_ms": 3.7328330072341487,
+      "latency_p95_ms": 4.644033603835851
+    },
+    {
+      "algorithm": "hybrid",
+      "recall@k": 0.4258,
+      "recall_ci": [
+        0.4061604166666667,
+        0.448921875
+      ],
+      "map@k": 0.1993,
+      "map_ci": [
+        0.18590824652777777,
+        0.21249997767857143
+      ],
+      "ndcg@k": 0.2541,
+      "ndcg_ci": [
+        0.23927646931730018,
+        0.2687197248816457
+      ],
+      "hit_rate@k": 0.4345,
+      "hit_rate_ci": [
+        0.413975,
+        0.4575
+      ],
+      "precision@k": 0.043699999999999996,
+      "coverage": 0.2721,
+      "diversity": 0.6585,
+      "ils": 0.3415,
+      "latency_p50_ms": 50.872323001385666,
+      "latency_p95_ms": 59.40168125889613
+    }
   ],
-  "blend_weights": {"neural": 0.45, "als": 0.35, "tfidf": 0.15, "popularity": 0.05}
+  "blend_weights": {
+    "tfidf": 0.45,
+    "neural": 0.3,
+    "als": 0.1,
+    "popularity": 0.15
+  },
+  "blend_weights_original": {
+    "neural": 0.45,
+    "als": 0.35,
+    "tfidf": 0.15,
+    "popularity": 0.05
+  }
 }
