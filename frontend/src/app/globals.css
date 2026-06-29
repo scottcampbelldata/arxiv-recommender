@@ -8,7 +8,7 @@
  * default (:root); `.dark` on <html> swaps the palette. The no-FOUC script in
  * the document head sets that class before first paint.
  *
- * Direction: "preprint / research instrument" — paper-and-ink surfaces, an
+ * Direction: "preprint / research instrument": paper-and-ink surfaces, an
  * indigo primary for chrome, and a categorical palette that gives each
  * algorithm a persistent identity used across columns and charts.
  */

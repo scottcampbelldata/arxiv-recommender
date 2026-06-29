@@ -25,12 +25,12 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "arXiv recommender — five algorithms, side by side",
+  title: "arXiv recommender: five algorithms, side by side",
   description:
-    "Pick any arXiv ML paper and watch five recommender algorithms — popularity, TF-IDF, a sentence-transformer, citation-graph ALS, and a tuned hybrid — return their picks side by side, with held-out evaluation and live latency.",
+    "Pick any arXiv ML paper and watch five recommender algorithms (popularity, TF-IDF, a sentence-transformer, citation-graph ALS, and a tuned hybrid) return their picks side by side, with held-out evaluation and live latency.",
   metadataBase: new URL("https://papers.scottcampbell.io"),
   openGraph: {
-    title: "arXiv recommender — five algorithms, side by side",
+    title: "arXiv recommender: five algorithms, side by side",
     description:
       "A hybrid paper recommender on the OpenAlex CS corpus. Compare five algorithms head to head, with held-out evaluation and sub-100 ms serving.",
     type: "website",

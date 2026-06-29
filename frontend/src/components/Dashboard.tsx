@@ -7,7 +7,6 @@ import { formatLift, formatMs } from "@/lib/format";
 import { AlgoColumn } from "./AlgoColumn";
 import { AppHeader } from "./AppHeader";
 import { KpiCard } from "./KpiCard";
-import { KpiRow } from "./KpiRow";
 import { Leaderboard } from "./Leaderboard";
 import { Panel } from "./Panel";
 import { SearchBar } from "./SearchBar";
@@ -28,76 +27,74 @@ export function Dashboard() {
     <div className="themed min-h-screen bg-bg">
       <AppHeader />
       <main className="mx-auto max-w-shell space-y-7 px-5 py-8 sm:py-10">
-        {/* Hero — the thesis: many ways to rank "similar", one corpus. */}
-        <section className="reveal max-w-3xl">
-          <p className="text-[11px] uppercase tracking-eyebrow text-faint">
-            Paper recommender · OpenAlex computer-science corpus
-          </p>
-          <h1 className="mt-3 font-display text-[2.1rem] font-medium leading-[1.08] tracking-[-0.01em] text-text sm:text-[2.75rem]">
-            Find the next paper{" "}
-            <span className="italic text-accent">worth reading.</span>
-          </h1>
-          <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted">
-            Pick any arXiv ML paper and four models return their most-similar work, side by side — a
-            tuned hybrid, a sentence-transformer, classic TF-IDF, and a citation-graph model — all
-            measured against a popularity baseline. Latency badges are live calls; the leaderboard is
-            held-out evaluation with bootstrap confidence intervals.
-          </p>
+        {/* Hero: text on the left, the headline metrics on the right, so the row
+            reads as one balanced unit instead of leaving the width empty. */}
+        <section className="reveal grid items-center gap-x-10 gap-y-8 lg:grid-cols-2">
+          <div>
+            <p className="text-[11px] uppercase tracking-eyebrow text-faint">
+              Paper recommender · OpenAlex computer-science corpus
+            </p>
+            <h1 className="mt-3 font-display text-[2.1rem] font-medium leading-[1.08] tracking-[-0.01em] text-text sm:text-[2.75rem]">
+              Find the next paper{" "}
+              <span className="italic text-accent">worth reading.</span>
+            </h1>
+            <p className="mt-4 text-[15px] leading-relaxed text-muted">
+              Pick any arXiv ML paper and four models return their most-similar work, side by side:
+              a tuned hybrid, a sentence-transformer, classic TF-IDF, and a citation-graph model, all
+              measured against a popularity baseline. Latency badges are live calls; the leaderboard
+              is held-out evaluation with bootstrap confidence intervals.
+            </p>
 
-          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-sm">
-            <Stat label="MAP@10" value={hybrid ? hybrid["map@k"].toFixed(3) : "—"} />
-            <Dot />
-            <Stat label="vs popularity" value={mapLift ? formatLift(mapLift) : "—"} />
-            <Dot />
-            <Stat label="p95" value={hybrid ? `${formatMs(hybrid.latency_p95_ms)} ms` : "—"} />
-            <Dot />
-            <Stat label="catalogue" value="28,436" />
+            <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-sm">
+              <Stat label="MAP@10" value={hybrid ? hybrid["map@k"].toFixed(3) : "-"} />
+              <Dot />
+              <Stat label="vs popularity" value={mapLift ? formatLift(mapLift) : "-"} />
+              <Dot />
+              <Stat label="p95" value={hybrid ? `${formatMs(hybrid.latency_p95_ms)} ms` : "-"} />
+            </div>
+
+            <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted">
+              {LEADERBOARD_ORDER.map((key) => (
+                <li key={key} className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full" style={{ background: algoColor(key) }} aria-hidden />
+                  {ALGO_LABEL[key]}
+                  {key === "popularity" && <span className="text-faint">(baseline)</span>}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          {/* Identity legend: establishes the colour = model language up front. */}
-          <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted">
-            {LEADERBOARD_ORDER.map((key) => (
-              <li key={key} className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full" style={{ background: algoColor(key) }} aria-hidden />
-                {ALGO_LABEL[key]}
-                {key === "popularity" && <span className="text-faint">(baseline)</span>}
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <div className="reveal" style={{ animationDelay: "60ms" }}>
-          <KpiRow>
+          <div className="grid grid-cols-2 gap-3">
             <KpiCard
               label="Best MAP@10 · hybrid"
-              value={hybrid ? hybrid["map@k"].toFixed(3) : "—"}
+              value={hybrid ? hybrid["map@k"].toFixed(3) : "-"}
               accent={algoColor("hybrid")}
               sub={mapLift ? <span><span className="text-text">{formatLift(mapLift)}</span> the popularity baseline</span> : null}
             />
             <KpiCard
               label="Hit-rate@10 · hybrid"
-              value={hybrid ? hybrid["hit_rate@k"].toFixed(2) : "—"}
-              sub={hitLift ? <span>finds a held-out citation <span className="text-text">{formatLift(hitLift)}</span> as often</span> : null}
+              value={hybrid ? hybrid["hit_rate@k"].toFixed(2) : "-"}
+              sub={hitLift ? <span>finds a citation <span className="text-text">{formatLift(hitLift)}</span> as often</span> : null}
             />
             <KpiCard
               label="p95 latency · hybrid"
-              value={hybrid ? formatMs(hybrid.latency_p95_ms) : "—"}
+              value={hybrid ? formatMs(hybrid.latency_p95_ms) : "-"}
               unit="ms"
-              sub={<span>top-10 over a 28,436-paper catalogue</span>}
+              sub={<span>top-10 over 28,436 papers</span>}
             />
             <KpiCard
               label="Catalogue"
               value="28,436"
-              sub={<span>CS arXiv papers since 2019, via OpenAlex</span>}
+              sub={<span>CS arXiv papers since 2019</span>}
             />
-          </KpiRow>
-        </div>
+          </div>
+        </section>
 
         <div className="reveal" style={{ animationDelay: "120ms" }}>
           <Panel
             eyebrow="Step 1"
             title="Choose a seed paper"
-            subtitle="Type a title or author — the FastAPI service does the lookup."
+            subtitle="Type a title or author. The FastAPI service does the lookup."
             right={
               <label className="flex items-center gap-2">
                 <span className="uppercase tracking-eyebrow text-faint">top-k</span>

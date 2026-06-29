@@ -47,7 +47,7 @@ export function AlgoColumn({ paper, k, algo, label, description }: Props) {
             {label}
           </h3>
           <span className="rounded-full border border-border bg-surface px-2 py-0.5 font-mono text-[11px] tabular-nums text-muted">
-            {data ? `${formatMs(data.latency_ms)} ms` : loading ? "···" : "—"}
+            {data ? `${formatMs(data.latency_ms)} ms` : loading ? "···" : "-"}
           </span>
         </div>
         <p className="mt-1.5 text-xs leading-snug text-muted">{description}</p>
