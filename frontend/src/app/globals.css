@@ -2,6 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Design tokens. Colours are stored as space-separated RGB channels so Tailwind
+ * can apply opacity via `rgb(var(--token) / <alpha-value>)`. Light is the
+ * default (:root); `.dark` on <html> swaps the palette. The no-FOUC script in
+ * the document head sets that class before first paint.
+ *
+ * Direction: "preprint / research instrument" — paper-and-ink surfaces, an
+ * indigo primary for chrome, and a categorical palette that gives each
+ * algorithm a persistent identity used across columns and charts.
+ */
+:root {
+  color-scheme: light;
+
+  --bg: 251 251 253;          /* #FBFBFD paper */
+  --surface: 255 255 255;     /* #FFFFFF */
+  --surface-2: 244 245 248;   /* #F4F5F8 nested / hover */
+  --border: 226 228 235;      /* #E2E4EB hairline */
+  --border-strong: 203 207 217;
+  --text: 17 21 28;           /* #11151C ink */
+  --muted: 90 99 113;         /* #5A6371 */
+  --faint: 146 153 165;       /* #9299A5 */
+  --accent: 79 70 229;        /* #4F46E5 indigo-600 */
+  --accent-soft: 238 238 252; /* indigo wash */
+  --accent-fg: 255 255 255;
+  --ring: 99 102 241;         /* indigo-500 */
+
+  /* Algorithm identity palette (categorical, distinct in both modes). */
+  --algo-hybrid: 5 150 105;       /* emerald */
+  --algo-neural: 217 119 6;       /* amber */
+  --algo-tfidf: 8 145 178;        /* cyan */
+  --algo-als: 225 29 72;          /* rose */
+  --algo-popularity: 100 116 139; /* slate */
+
+  --shadow-sm: 0 1px 2px rgb(17 21 28 / 0.04), 0 1px 3px rgb(17 21 28 / 0.06);
+  --shadow-md: 0 4px 12px rgb(17 21 28 / 0.06), 0 2px 4px rgb(17 21 28 / 0.04);
+  --shadow-pop: 0 12px 32px rgb(17 21 28 / 0.12), 0 2px 8px rgb(17 21 28 / 0.08);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --bg: 14 17 22;             /* #0E1116 ink */
+  --surface: 22 27 34;        /* #161B22 */
+  --surface-2: 28 34 46;      /* #1C222E */
+  --border: 38 44 54;         /* #262C36 */
+  --border-strong: 51 59 71;
+  --text: 230 233 239;        /* #E6E9EF */
+  --muted: 153 161 174;       /* #99A1AE */
+  --faint: 107 114 128;       /* #6B7280 */
+  --accent: 129 140 248;      /* #818CF8 indigo-400 */
+  --accent-soft: 30 33 64;
+  --accent-fg: 14 17 22;
+  --ring: 129 140 248;
+
+  --algo-hybrid: 52 211 153;      /* emerald-400 */
+  --algo-neural: 251 191 36;      /* amber-400 */
+  --algo-tfidf: 34 211 238;       /* cyan-400 */
+  --algo-als: 251 113 133;        /* rose-400 */
+  --algo-popularity: 148 163 184; /* slate-400 */
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 6px 18px rgb(0 0 0 / 0.35);
+  --shadow-pop: 0 16px 40px rgb(0 0 0 / 0.5), 0 2px 8px rgb(0 0 0 / 0.4);
+}
+
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
@@ -10,15 +75,46 @@
   }
   body {
     @apply bg-bg font-sans text-text;
-    font-feature-settings: "tnum" 1;
+    font-feature-settings: "tnum" 1, "cv05" 1;
+  }
+  /* Theme transition: only colours, only when not reducing motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    body,
+    .themed {
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
   }
   ::selection {
-    background: rgba(79, 139, 245, 0.25);
+    background: rgb(var(--accent) / 0.22);
+  }
+  :focus-visible {
+    outline: 2px solid rgb(var(--ring));
+    outline-offset: 2px;
+    border-radius: 4px;
   }
   * {
     scrollbar-width: thin;
-    scrollbar-color: #23262d transparent;
+    scrollbar-color: rgb(var(--border-strong)) transparent;
   }
   *::-webkit-scrollbar { width: 10px; height: 10px; }
-  *::-webkit-scrollbar-thumb { background: #23262d; border-radius: 9999px; }
+  *::-webkit-scrollbar-thumb {
+    background: rgb(var(--border-strong));
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+}
+
+@layer utilities {
+  /* Page-load reveal, opt-in via .reveal; disabled under reduced motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+  }
+  @keyframes reveal {
+    to { opacity: 1; transform: none; }
+  }
 }
