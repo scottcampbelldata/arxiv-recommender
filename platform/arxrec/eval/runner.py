@@ -39,12 +39,17 @@ class EvalResult:
     recall: MetricCI
     map_: MetricCI
     ndcg: MetricCI
+    hit_rate: MetricCI
     coverage: float
     diversity: float
     ils: float
     latency_p50_ms: float
     latency_p95_ms: float
     segments: dict[str, dict[str, float]] = field(default_factory=dict)
+    # Per-seed metric values, aligned to a shared seed order, kept so that
+    # paired significance tests (arxrec.eval.significance) can compare models.
+    # Not emitted by as_row(); held in memory for the current eval run only.
+    per_seed: dict[str, list[float]] = field(default_factory=dict, repr=False)
 
     def as_row(self) -> dict[str, float | str | int]:
         return {
@@ -59,6 +64,9 @@ class EvalResult:
             "ndcg@k": self.ndcg.value,
             "ndcg_ci_lo": self.ndcg.ci_low,
             "ndcg_ci_hi": self.ndcg.ci_high,
+            "hit_rate@k": self.hit_rate.value,
+            "hit_rate_ci_lo": self.hit_rate.ci_low,
+            "hit_rate_ci_hi": self.hit_rate.ci_high,
             "coverage": self.coverage,
             "diversity": self.diversity,
             "ils": self.ils,
@@ -102,6 +110,7 @@ def run_similar_items_eval(
     per_r = np.empty(len(seeds), dtype=np.float64)
     per_ap = np.empty(len(seeds), dtype=np.float64)
     per_ndcg = np.empty(len(seeds), dtype=np.float64)
+    per_hit = np.empty(len(seeds), dtype=np.float64)
     rec_lists: list[list[int]] = []
     latencies: list[float] = []
 
@@ -114,6 +123,7 @@ def run_similar_items_eval(
         per_r[i] = M.recall_at_k(r.item_ids, held, k)
         per_ap[i] = M.average_precision_at_k(r.item_ids, held, k)
         per_ndcg[i] = M.ndcg_at_k(r.item_ids, held, k)
+        per_hit[i] = M.hit_rate_at_k(r.item_ids, held, k)
         rec_lists.append(list(r.item_ids))
 
     cov = M.coverage(rec_lists, n_items)
@@ -134,6 +144,7 @@ def run_similar_items_eval(
                 "recall@k": float(per_r[mask].mean()),
                 "map@k": float(per_ap[mask].mean()),
                 "ndcg@k": float(per_ndcg[mask].mean()),
+                "hit_rate@k": float(per_hit[mask].mean()),
                 "n": int(mask.sum()),
             }
         warm = ~mask
@@ -143,6 +154,7 @@ def run_similar_items_eval(
                 "recall@k": float(per_r[warm].mean()),
                 "map@k": float(per_ap[warm].mean()),
                 "ndcg@k": float(per_ndcg[warm].mean()),
+                "hit_rate@k": float(per_hit[warm].mean()),
                 "n": int(warm.sum()),
             }
 
@@ -155,10 +167,19 @@ def run_similar_items_eval(
         recall=_bootstrap_ci(per_r, seed=seed + 1),
         map_=_bootstrap_ci(per_ap, seed=seed + 2),
         ndcg=_bootstrap_ci(per_ndcg, seed=seed + 3),
+        hit_rate=_bootstrap_ci(per_hit, seed=seed + 4),
         coverage=cov,
         diversity=div,
         ils=ils,
         segments=segments,
+        per_seed={
+            "precision": per_p.tolist(),
+            "recall": per_r.tolist(),
+            "map": per_ap.tolist(),
+            "ndcg": per_ndcg.tolist(),
+            "hit_rate": per_hit.tolist(),
+            "seeds": [int(s) for s in seeds],
+        },
         latency_p50_ms=float(np.quantile(lat, 0.5)) if lat.size else 0.0,
         latency_p95_ms=float(np.quantile(lat, 0.95)) if lat.size else 0.0,
     )

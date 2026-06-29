@@ -1,0 +1,13 @@
+{
+  "_provenance": "Offline held-out citation evaluation, k=10, 2000 eval seeds, from the most recent committed training run (frontend/src/lib/leaderboard.ts). Point estimates; bootstrap CIs live in ml.eval_metric and are loaded separately when available.",
+  "k": 10,
+  "n_seeds_eval": 2000,
+  "rows": [
+    {"algorithm": "popularity", "recall@k": 0.0320, "map@k": 0.0101, "ndcg@k": 0.0155, "precision@k": 0.0033, "coverage": 0.0004, "diversity": 0.94, "ils": 0.06, "latency_p50_ms": 0.08, "latency_p95_ms": 0.12},
+    {"algorithm": "tfidf",      "recall@k": 0.3110, "map@k": 0.1546, "ndcg@k": 0.1925, "precision@k": 0.0317, "coverage": 0.387,  "diversity": 0.87, "ils": 0.13, "latency_p50_ms": 55.4, "latency_p95_ms": 66.4},
+    {"algorithm": "neural",     "recall@k": 0.2709, "map@k": 0.1279, "ndcg@k": 0.1623, "precision@k": 0.0277, "coverage": 0.366,  "diversity": 0.87, "ils": 0.13, "latency_p50_ms": 2.91, "latency_p95_ms": 3.70},
+    {"algorithm": "als",        "recall@k": 0.1225, "map@k": 0.0392, "ndcg@k": 0.0588, "precision@k": 0.0127, "coverage": 0.184,  "diversity": 0.57, "ils": 0.43, "latency_p50_ms": 0.31, "latency_p95_ms": 0.68},
+    {"algorithm": "hybrid",     "recall@k": 0.3465, "map@k": 0.1665, "ndcg@k": 0.2101, "precision@k": 0.0353, "coverage": 0.333,  "diversity": 0.56, "ils": 0.44, "latency_p50_ms": 61.2, "latency_p95_ms": 75.4}
+  ],
+  "blend_weights": {"neural": 0.45, "als": 0.35, "tfidf": 0.15, "popularity": 0.05}
+}

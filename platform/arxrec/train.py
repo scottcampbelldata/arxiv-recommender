@@ -59,6 +59,7 @@ def _persist_run(algo: str, params: dict, artifact: str | None, eval_result) -> 
             (run_id, "recall", eval_result.k, eval_result.recall.value, eval_result.recall.ci_low, eval_result.recall.ci_high, "all"),
             (run_id, "map", eval_result.k, eval_result.map_.value, eval_result.map_.ci_low, eval_result.map_.ci_high, "all"),
             (run_id, "ndcg", eval_result.k, eval_result.ndcg.value, eval_result.ndcg.ci_low, eval_result.ndcg.ci_high, "all"),
+            (run_id, "hit_rate", eval_result.k, eval_result.hit_rate.value, eval_result.hit_rate.ci_low, eval_result.hit_rate.ci_high, "all"),
             (run_id, "coverage", eval_result.k, eval_result.coverage, None, None, "all"),
             (run_id, "diversity", eval_result.k, eval_result.diversity, None, None, "all"),
             (run_id, "ils", eval_result.k, eval_result.ils, None, None, "all"),
