@@ -1,5 +1,13 @@
 """Hybrid recommender: blend ALS, neural embedding, TF-IDF, and popularity.
 
+Blend weights are data-driven, not hand-set: an NDCG@10 simplex search over the
+held-out citations (``arxrec.eval.tune_weights`` / ``scripts/tune_and_report.py``)
+selected TF-IDF 0.45, neural 0.30, ALS 0.10, popularity 0.15, lifting held-out
+NDCG@10 from 0.213 (the original neural-heavy weights) to 0.254. The optimum
+up-weights TF-IDF, the strongest single model on this corpus, and down-weights
+ALS, whose sparse-citation signal mostly re-derives popularity. See
+``docs/analysis/recommender-evaluation.md``.
+
 Cold-start handling: papers with zero incoming citations have no signal from
 ALS at all. The blend down-weights ALS automatically (it returns near-zero
 scores for cold items) and the content towers carry the recommendation.
@@ -39,10 +47,10 @@ class HybridRecommender:
         neural: NeuralEmbeddingRecommender,
         tfidf: TfidfRecommender,
         popularity: PopularityRecommender,
-        w_neural: float = 0.45,
-        w_als: float = 0.35,
-        w_tfidf: float = 0.15,
-        w_pop: float = 0.05,
+        w_neural: float = 0.30,
+        w_als: float = 0.10,
+        w_tfidf: float = 0.45,
+        w_pop: float = 0.15,
     ) -> None:
         self.als = als
         self.neural = neural

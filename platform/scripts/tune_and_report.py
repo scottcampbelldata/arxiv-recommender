@@ -30,6 +30,9 @@ from arxrec.eval.significance import paired_bootstrap_diff
 from arxrec.eval.tune_weights import build_candidates, grid_search_weights
 
 MODELS = ["neural", "als", "tfidf", "popularity"]
+# Original hand-set weights, kept as the comparison baseline so the report shows
+# the gain over the configuration that motivated this analysis. The tuned optimum
+# is now the default in arxrec.algo.hybrid.
 SHIPPED = {"neural": 0.45, "als": 0.35, "tfidf": 0.15, "popularity": 0.05}
 
 

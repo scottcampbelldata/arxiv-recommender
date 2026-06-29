@@ -1,0 +1,122 @@
+{
+  "k": 10,
+  "n_seeds": 2000,
+  "weight_search": {
+    "shipped_weights": {
+      "neural": 0.45,
+      "als": 0.35,
+      "tfidf": 0.15,
+      "popularity": 0.05
+    },
+    "shipped_ndcg": 0.2125,
+    "best_weights": {
+      "neural": 0.3,
+      "als": 0.1,
+      "tfidf": 0.45,
+      "popularity": 0.15
+    },
+    "best_ndcg": 0.2543,
+    "improvement": 0.0418,
+    "top_blends": [
+      {
+        "weights": {
+          "neural": 0.3,
+          "als": 0.1,
+          "tfidf": 0.45,
+          "popularity": 0.15
+        },
+        "ndcg": 0.2543
+      },
+      {
+        "weights": {
+          "neural": 0.3,
+          "als": 0.15,
+          "tfidf": 0.4,
+          "popularity": 0.15
+        },
+        "ndcg": 0.254
+      },
+      {
+        "weights": {
+          "neural": 0.25,
+          "als": 0.1,
+          "tfidf": 0.5,
+          "popularity": 0.15
+        },
+        "ndcg": 0.2539
+      },
+      {
+        "weights": {
+          "neural": 0.25,
+          "als": 0.15,
+          "tfidf": 0.45,
+          "popularity": 0.15
+        },
+        "ndcg": 0.2536
+      },
+      {
+        "weights": {
+          "neural": 0.3,
+          "als": 0.1,
+          "tfidf": 0.4,
+          "popularity": 0.2
+        },
+        "ndcg": 0.2534
+      },
+      {
+        "weights": {
+          "neural": 0.25,
+          "als": 0.1,
+          "tfidf": 0.45,
+          "popularity": 0.2
+        },
+        "ndcg": 0.2533
+      },
+      {
+        "weights": {
+          "neural": 0.35,
+          "als": 0.1,
+          "tfidf": 0.4,
+          "popularity": 0.15
+        },
+        "ndcg": 0.2532
+      },
+      {
+        "weights": {
+          "neural": 0.25,
+          "als": 0.05,
+          "tfidf": 0.55,
+          "popularity": 0.15
+        },
+        "ndcg": 0.2532
+      },
+      {
+        "weights": {
+          "neural": 0.3,
+          "als": 0.05,
+          "tfidf": 0.45,
+          "popularity": 0.2
+        },
+        "ndcg": 0.2526
+      },
+      {
+        "weights": {
+          "neural": 0.35,
+          "als": 0.15,
+          "tfidf": 0.35,
+          "popularity": 0.15
+        },
+        "ndcg": 0.2523
+      }
+    ]
+  },
+  "hybrid_vs_tfidf_ndcg": {
+    "hybrid_ndcg": 0.2125,
+    "tfidf_ndcg": 0.1872,
+    "mean_diff": 0.0253,
+    "ci_low": 0.0128,
+    "ci_high": 0.0376,
+    "p_value": 0.0,
+    "significant": true
+  }
+}
