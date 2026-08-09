@@ -15,18 +15,18 @@
 :root {
   color-scheme: light;
 
-  --bg: 251 251 253;          /* #FBFBFD paper */
+  --bg: 250 250 252;
   --surface: 255 255 255;     /* #FFFFFF */
-  --surface-2: 244 245 248;   /* #F4F5F8 nested / hover */
-  --border: 226 228 235;      /* #E2E4EB hairline */
-  --border-strong: 203 207 217;
-  --text: 17 21 28;           /* #11151C ink */
-  --muted: 90 99 113;         /* #5A6371 */
-  --faint: 146 153 165;       /* #9299A5 */
-  --accent: 79 70 229;        /* #4F46E5 indigo-600 */
-  --accent-soft: 238 238 252; /* indigo wash */
+  --surface-2: 242 241 245;
+  --border: 227 224 232;
+  --border-strong: 201 196 209;
+  --text: 22 21 27;
+  --muted: 98 93 106;
+  --faint: 146 140 154;
+  --accent: 89 71 164;
+  --accent-soft: 238 235 246;
   --accent-fg: 255 255 255;
-  --ring: 99 102 241;         /* indigo-500 */
+  --ring: 111 90 185;
 
   /* Algorithm identity palette (categorical, distinct in both modes). */
   --algo-hybrid: 5 150 105;       /* emerald */
@@ -43,18 +43,18 @@
 .dark {
   color-scheme: dark;
 
-  --bg: 14 17 22;             /* #0E1116 ink */
-  --surface: 22 27 34;        /* #161B22 */
-  --surface-2: 28 34 46;      /* #1C222E */
-  --border: 38 44 54;         /* #262C36 */
-  --border-strong: 51 59 71;
-  --text: 230 233 239;        /* #E6E9EF */
-  --muted: 153 161 174;       /* #99A1AE */
-  --faint: 107 114 128;       /* #6B7280 */
-  --accent: 129 140 248;      /* #818CF8 indigo-400 */
-  --accent-soft: 30 33 64;
-  --accent-fg: 14 17 22;
-  --ring: 129 140 248;
+  --bg: 16 16 21;
+  --surface: 25 24 32;
+  --surface-2: 34 32 43;
+  --border: 51 47 61;
+  --border-strong: 74 67 85;
+  --text: 236 234 240;
+  --muted: 168 161 176;
+  --faint: 117 110 128;
+  --accent: 186 173 233;
+  --accent-soft: 48 42 69;
+  --accent-fg: 16 16 21;
+  --ring: 186 173 233;
 
   --algo-hybrid: 52 211 153;      /* emerald-400 */
   --algo-neural: 251 191 36;      /* amber-400 */
