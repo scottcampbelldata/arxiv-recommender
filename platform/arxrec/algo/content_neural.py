@@ -4,9 +4,6 @@ Uses ``sentence-transformers/all-MiniLM-L6-v2`` (22M params, 384-d output).
 On a 32k paper subset this encodes in roughly 2 minutes on CPU. The vectors
 are L2-normalised so cosine similarity reduces to a dot product, which lets
 us reuse the same FAISS inner-product index pattern as ALS.
-
-Senior signal: bringing a transformer encoder into the recsys pipeline,
-not just classical TF-IDF, with a clear story for why each tower exists.
 """
 
 from __future__ import annotations

@@ -28,9 +28,9 @@ def recall_at_k(recs: Iterable[int], holdout: set[int], k: int) -> float:
 def hit_rate_at_k(recs: Iterable[int], holdout: set[int], k: int) -> float:
     """1.0 if any held-out item appears in the top-k, else 0.0.
 
-    Averaged across seeds this is the "how often does the held-out cited paper
-    show up in the top-K" quantity -- the metric the project's headline claim is
-    actually about, and the one most legible to a non-specialist reader.
+    Averaged across seeds this answers "how often does the held-out cited paper
+    show up in the top-K". That is the number the README headline uses, and the
+    easiest one to explain to someone outside the field.
     """
     r = _to_array(recs)[:k]
     if not holdout or len(r) == 0:

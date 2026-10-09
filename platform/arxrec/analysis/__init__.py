@@ -1,11 +1,11 @@
 """Behavioural analysis of the recommender, complementing the offline eval.
 
 The offline leaderboard (``arxrec.eval``) answers *is each algorithm accurate*
-against held-out citations. This package answers a different, equally senior
+against held-out citations. This package answers a different
 question: *how do the five algorithms behave relative to one another in
-production* -- do they agree on what to recommend, how concentrated are their
+production*? Do they agree on what to recommend, how concentrated are their
 picks across the catalogue, and what does the hybrid actually inherit from its
-parts. The two views together are what turns a leaderboard into a findings
+parts? Looking at both views is what turns a leaderboard into a findings
 report.
 
 ``collect`` samples the live HTTP API; ``stats`` reduces the raw sample to the

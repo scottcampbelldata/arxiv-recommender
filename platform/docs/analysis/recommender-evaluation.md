@@ -1,15 +1,14 @@
-# Evaluating the arXiv recommender: what the numbers actually say
+# Evaluating the arXiv recommender
 
 **Author:** Scott Campbell · **Scope:** offline held-out evaluation (2,000 seeds,
 k=10, 95% bootstrap CIs) cross-checked against 180 seeds of live production
 behaviour · **Catalogue:** 28,436 CS papers.
 
-This is the analysis the leaderboard doesn't do for you. The project trains five
-recommenders and reports a leaderboard; that tells you *which* model wins but not
-*why*, what each model is really doing, or whether the shipped configuration is
+The project trains five recommenders and reports a leaderboard. That tells you
+*which* model wins but not *why*, what each model is really doing, or whether the shipped configuration is
 the right one. Reading the evaluation output and the live system together
-surfaced three findings, and the most important one led to a change that is
-**now deployed in production**: the blend was weighted toward the weaker of its
+surfaced three findings. The most important one led to a change that is now
+deployed: the blend was weighted toward the weaker of its
 two content models, and re-tuning it on held-out NDCG lifted the hybrid's
 NDCG@10 by ~20% with no model retraining required.
 

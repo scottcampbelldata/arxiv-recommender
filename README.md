@@ -15,7 +15,8 @@ serving, and a side-by-side dashboard.
 [platform/docs/analysis/recommender-evaluation.md](platform/docs/analysis/recommender-evaluation.md).
 It reads the evaluation and live system together and finds, among other things,
 that the production blend was weighted toward the weaker of its two content
-models. Grounded in real numbers and fully reproducible.
+models. Every number in it comes from committed data and the scripts that
+produce it.
 
 Live demo: <https://papers.scottcampbell.io>
 Case study: <https://scottcampbell.io/projects/arxiv-recommender>
@@ -51,9 +52,9 @@ HTTPS. The backend serves JSON only.
 `papers.scottcampbell.io` is the Cloudflare Pages frontend.
 `api.papers.scottcampbell.io` is the FastAPI service on the VPS.
 
-## What this project demonstrates
+## What's in here
 
-| Senior skill | Where it lives |
+| Piece | Where it lives |
 |---|---|
 | Multiple recommender algorithms (popularity, TF-IDF, neural, ALS, hybrid) | `platform/arxrec/algo/` |
 | Real evaluation (P, R, MAP, NDCG, hit-rate, coverage, diversity, ILS, bootstrap CIs) | `platform/arxrec/eval/` |
@@ -63,7 +64,7 @@ HTTPS. The backend serves JSON only.
 | Production serving with FastAPI + FAISS ANN + request logging | `platform/arxrec/api/` |
 | Sentence-transformer (MiniLM) encoder fitted to abstracts | `platform/arxrec/algo/content_neural.py` |
 | Postgres with least-privilege role and dedicated schemas | `platform/arxrec/db/schema.sql` |
-| Senior-grade dashboard, Bloomberg-terminal aesthetic, mobile responsive | `frontend/src/` |
+| Dashboard with light and dark themes, works on mobile | `frontend/src/` |
 | Property-based tests on every ranking metric | `platform/tests/` |
 | Reproducibility, single seed controls splits and ALS init | `platform/arxrec/utils/seed.py` |
 | Real deploy artefacts, systemd units, nginx config, Pages config | `platform/deploy/` |
