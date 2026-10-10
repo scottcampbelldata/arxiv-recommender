@@ -22,16 +22,16 @@
   --border-strong: 201 196 209;
   --text: 22 21 27;
   --muted: 98 93 106;
-  --faint: 146 140 154;
+  --faint: 112 107 118;
   --accent: 89 71 164;
   --accent-soft: 238 235 246;
   --accent-fg: 255 255 255;
   --ring: 111 90 185;
 
   /* Algorithm identity palette (categorical, distinct in both modes). */
-  --algo-hybrid: 5 150 105;       /* emerald */
-  --algo-neural: 217 119 6;       /* amber */
-  --algo-tfidf: 8 145 178;        /* cyan */
+  --algo-hybrid: 4 120 87;        /* emerald */
+  --algo-neural: 180 83 9;        /* amber */
+  --algo-tfidf: 14 116 144;       /* cyan */
   --algo-als: 225 29 72;          /* rose */
   --algo-popularity: 100 116 139; /* slate */
 

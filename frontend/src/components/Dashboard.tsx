@@ -149,7 +149,7 @@ export function Dashboard() {
             implicit ALS over citations, and a held-out-tuned hybrid. Serving: FastAPI + FAISS.
             Frontend: Next.js on Cloudflare Pages.{" "}
             <a
-              className="text-accent hover:underline"
+              className="text-accent underline"
               href="https://github.com/scottcampbelldata/arxiv-recommender"
               target="_blank"
               rel="noreferrer"

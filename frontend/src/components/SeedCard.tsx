@@ -33,18 +33,16 @@ export function SeedCard({ paper }: { paper: Paper }) {
         )}
         <Meta term="Cited by" value={<span className="font-mono text-text">{formatNumber(paper.cited_by_count)}</span>} />
         {paper.primary_topic && (
-          <div className="col-span-2">
-            <Meta term="Topic" value={<span className="text-text">{paper.primary_topic}</span>} />
-          </div>
+          <Meta className="col-span-2" term="Topic" value={<span className="text-text">{paper.primary_topic}</span>} />
         )}
       </dl>
     </div>
   );
 }
 
-function Meta({ term, value }: { term: string; value: React.ReactNode }) {
+function Meta({ term, value, className }: { term: string; value: React.ReactNode; className?: string }) {
   return (
-    <div>
+    <div className={className}>
       <dt className="uppercase tracking-eyebrow text-faint">{term}</dt>
       <dd className="mt-0.5">{value}</dd>
     </div>
