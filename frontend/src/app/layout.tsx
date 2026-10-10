@@ -25,16 +25,57 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "arXiv recommender: five algorithms, side by side",
-  description:
-    "Pick any arXiv ML paper and watch five recommender algorithms (popularity, TF-IDF, a sentence-transformer, citation-graph ALS, and a tuned hybrid) return their picks side by side, with held-out evaluation and live latency.",
   metadataBase: new URL("https://papers.scottcampbell.io"),
+  title: "arXiv paper recommender: five algorithms, side by side",
+  description:
+    "Pick any arXiv ML paper and compare five recommender algorithms (popularity, TF-IDF, a sentence transformer, citation graph ALS and a tuned hybrid) with held out evaluation and live latency.",
+  applicationName: "arXiv Recommender",
+  authors: [{ name: "Scott Campbell", url: "https://scottcampbell.io/" }],
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "arXiv recommender: five algorithms, side by side",
-    description:
-      "A hybrid paper recommender on the OpenAlex CS corpus. Compare five algorithms head to head, with held-out evaluation and sub-100 ms serving.",
     type: "website",
+    url: "/",
+    siteName: "arXiv Recommender",
+    title: "arXiv paper recommender: five algorithms, side by side",
+    description: "A hybrid paper recommender on the OpenAlex CS corpus. Compare five algorithms head to head, with held out evaluation and sub 100 ms serving.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "arXiv Recommender comparing five recommendation algorithms" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "arXiv paper recommender: five algorithms, side by side",
+    description: "A hybrid paper recommender on the OpenAlex CS corpus. Compare five algorithms head to head, with held out evaluation and sub 100 ms serving.",
+    images: ["/og-image.png"],
+  },
+};
+
+// Structured data for search engines.
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "arXiv Recommender",
+  "url": "https://papers.scottcampbell.io/",
+  "description": "Pick any arXiv ML paper and compare five recommender algorithms (popularity, TF-IDF, a sentence transformer, citation graph ALS and a tuned hybrid) with held out evaluation and live latency.",
+  "applicationCategory": "ReferenceApplication",
+  "operatingSystem": "Any (web browser)",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Scott Campbell",
+    "url": "https://scottcampbell.io/"
+  },
+  "subjectOf": {
+    "@type": "CreativeWork",
+    "name": "arXiv Recommender case study",
+    "url": "https://scottcampbell.io/projects/arxiv-recommender/"
+  },
+  "sameAs": [
+    "https://github.com/scottcampbelldata/arxiv-recommender"
+  ]
 };
 
 export const viewport: Viewport = {
@@ -58,6 +99,7 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }} />
       </head>
       <body>{children}</body>
     </html>
