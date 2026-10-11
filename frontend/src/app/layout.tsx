@@ -26,9 +26,9 @@ const mono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://papers.scottcampbell.io"),
-  title: "arXiv paper recommender: five algorithms, side by side",
+  title: "arXiv paper recommender: four recommenders and a popularity baseline",
   description:
-    "Pick any arXiv ML paper and compare five recommender algorithms (popularity, TF-IDF, a sentence transformer, citation graph ALS and a tuned hybrid) with held out evaluation and live latency.",
+    "Pick any arXiv computer science paper from 2019 on and compare four recommenders (TF-IDF, a sentence transformer, citation graph ALS and a tuned hybrid) and a popularity baseline, with held out evaluation and live latency.",
   applicationName: "arXiv Recommender",
   authors: [{ name: "Scott Campbell", url: "https://scottcampbell.io/" }],
   alternates: { canonical: "/" },
@@ -36,14 +36,14 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: "arXiv Recommender",
-    title: "arXiv paper recommender: five algorithms, side by side",
-    description: "A hybrid paper recommender on the OpenAlex CS corpus. Compare five algorithms head to head, with held out evaluation and sub 100 ms serving.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "arXiv Recommender comparing five recommendation algorithms" }],
+    title: "arXiv paper recommender: four recommenders and a popularity baseline",
+    description: "A hybrid paper recommender on the OpenAlex CS corpus. Compare four recommenders and a popularity baseline head to head, with held out evaluation and sub 100 ms serving.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "arXiv Recommender comparing four recommenders and a popularity baseline" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "arXiv paper recommender: five algorithms, side by side",
-    description: "A hybrid paper recommender on the OpenAlex CS corpus. Compare five algorithms head to head, with held out evaluation and sub 100 ms serving.",
+    title: "arXiv paper recommender: four recommenders and a popularity baseline",
+    description: "A hybrid paper recommender on the OpenAlex CS corpus. Compare four recommenders and a popularity baseline head to head, with held out evaluation and sub 100 ms serving.",
     images: ["/og-image.png"],
   },
 };
@@ -54,7 +54,7 @@ const JSON_LD = {
   "@type": "WebApplication",
   "name": "arXiv Recommender",
   "url": "https://papers.scottcampbell.io/",
-  "description": "Pick any arXiv ML paper and compare five recommender algorithms (popularity, TF-IDF, a sentence transformer, citation graph ALS and a tuned hybrid) with held out evaluation and live latency.",
+  "description": "Pick any arXiv computer science paper from 2019 on and compare four recommenders (TF-IDF, a sentence transformer, citation graph ALS and a tuned hybrid) and a popularity baseline, with held out evaluation and live latency.",
   "applicationCategory": "ReferenceApplication",
   "operatingSystem": "Any (web browser)",
   "isAccessibleForFree": true,

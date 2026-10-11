@@ -55,7 +55,7 @@ export function Leaderboard() {
   return (
     <Panel
       eyebrow="Offline evaluation"
-      title="How the five algorithms actually score"
+      title="How four recommenders and a popularity baseline score"
       subtitle={`Held-out citations, ${rows[0]?.n_seeds_eval.toLocaleString()} seeds, top-10, bootstrap 95% CIs. Hybrid is the deployed model.`}
     >
       <div className="-mx-1 overflow-x-auto px-1">

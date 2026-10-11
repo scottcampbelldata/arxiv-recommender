@@ -35,12 +35,12 @@ export function Dashboard() {
               Paper recommender · OpenAlex computer-science corpus
             </p>
             <h1 className="mt-3 font-display text-[2.1rem] font-medium leading-[1.08] tracking-[-0.01em] text-text sm:text-[2.75rem]">
-              Find the next paper{" "}
-              <span className="italic text-accent">worth reading.</span>
+              Find related arXiv CS papers,{" "}
+              <span className="italic text-accent">ranked by four recommenders</span>
             </h1>
             <p className="mt-4 text-[15px] leading-relaxed text-muted">
-              Pick any arXiv ML paper and four models return their most-similar work, side by side:
-              a tuned hybrid, a sentence-transformer, classic TF-IDF, and a citation-graph model, all
+              Pick any arXiv computer science paper from 2019 on. Four models return their
+              most-similar work, side by side: a tuned hybrid, a sentence-transformer, classic TF-IDF, and a citation-graph model, all
               measured against a popularity baseline. Latency badges are live calls; the leaderboard
               is held-out evaluation with bootstrap confidence intervals.
             </p>
@@ -80,10 +80,10 @@ export function Dashboard() {
               label="p95 latency · hybrid"
               value={hybrid ? formatMs(hybrid.latency_p95_ms) : "-"}
               unit="ms"
-              sub={<span>top-10 over 28,436 papers</span>}
+              sub={<span>top-10, on the 28,436-paper evaluation set</span>}
             />
             <KpiCard
-              label="Catalogue"
+              label="Evaluation set"
               value="28,436"
               sub={<span>CS arXiv papers since 2019</span>}
             />

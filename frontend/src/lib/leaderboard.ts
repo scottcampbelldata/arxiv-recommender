@@ -5,7 +5,7 @@
 //
 // Current values: production retrain 2026-06-29 with the NDCG-tuned blend
 // weights (TF-IDF 0.45 / neural 0.30 / ALS 0.10 / popularity 0.15), k=10,
-// 2,000 held-out seeds over the 28,436-paper catalogue.
+// 2,000 held-out seeds over the 28,436-paper evaluation set (the live API serves a larger catalogue).
 
 export interface LeaderboardRow {
   algorithm: string;
