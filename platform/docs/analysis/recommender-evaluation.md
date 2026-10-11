@@ -2,7 +2,7 @@
 
 **Author:** Scott Campbell · **Scope:** offline held-out evaluation (2,000 seeds,
 k=10, 95% bootstrap CIs) cross-checked against 180 seeds of live production
-behaviour · **Catalogue:** 28,436 CS papers.
+behaviour · **Evaluation set:** 28,436 CS papers.
 
 The project trains four recommenders and a popularity baseline and reports a leaderboard. That tells you
 *which* model wins but not *why*, what each model is really doing, or whether the shipped configuration is

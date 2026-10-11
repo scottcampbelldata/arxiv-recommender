@@ -7,8 +7,7 @@ Live at [papers.scottcampbell.io](https://papers.scottcampbell.io). More of my w
 Hybrid arXiv paper recommender on the OpenAlex Computer Science snapshot.
 Compares four recommenders and a popularity baseline head to head: classical
 TF-IDF on title and abstract, a MiniLM sentence-transformer over abstracts,
-implicit ALS over the citation graph, and a hybrid linear blend, against a
-popularity baseline. Held-out
+implicit ALS over the citation graph, and a hybrid linear blend. Held-out
 evaluation, bootstrap confidence intervals on every metric, FAISS ANN for
 serving, and a side-by-side dashboard.
 
