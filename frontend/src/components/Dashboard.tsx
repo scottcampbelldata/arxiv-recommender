@@ -28,8 +28,10 @@ export function Dashboard() {
       <AppHeader />
       <main className="mx-auto max-w-shell space-y-7 px-5 py-8 sm:py-10">
         {/* Hero: text on the left, the headline metrics on the right, so the row
-            reads as one balanced unit instead of leaving the width empty. */}
-        <section className="reveal grid items-center gap-x-10 gap-y-8 lg:grid-cols-2">
+            reads as one balanced unit instead of leaving the width empty. No
+            fade-in here: text that starts at opacity 0 is not counted as painted
+            until a later repaint, which pushed the largest paint past 2 s. */}
+        <section className="grid items-center gap-x-10 gap-y-8 lg:grid-cols-2">
           <div>
             <p className="text-[11px] uppercase tracking-eyebrow text-faint">
               Paper recommender · OpenAlex computer-science corpus
