@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function SearchBar({ onPick, picked }: Props) {
-  const [q, setQ] = useState("attention is all you need");
+  const [q, setQ] = useState("federated learning");
   const [results, setResults] = useState<Paper[]>([]);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
