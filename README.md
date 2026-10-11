@@ -1,13 +1,14 @@
 # arXiv recommender
 
-**A recommender for arXiv computer science papers that compares five recommendation methods side by side.**
+**A recommender for arXiv computer science papers that compares four recommenders and a popularity baseline side by side.**
 
 Live at [papers.scottcampbell.io](https://papers.scottcampbell.io). More of my work is at [scottcampbell.io](https://scottcampbell.io).
 
 Hybrid arXiv paper recommender on the OpenAlex Computer Science snapshot.
-Compares five algorithms head to head: a popularity baseline, classical
+Compares four recommenders and a popularity baseline head to head: classical
 TF-IDF on title and abstract, a MiniLM sentence-transformer over abstracts,
-implicit ALS over the citation graph, and a hybrid linear blend. Held-out
+implicit ALS over the citation graph, and a hybrid linear blend, against a
+popularity baseline. Held-out
 evaluation, bootstrap confidence intervals on every metric, FAISS ANN for
 serving, and a side-by-side dashboard.
 

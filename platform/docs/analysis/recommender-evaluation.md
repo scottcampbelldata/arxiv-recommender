@@ -4,7 +4,7 @@
 k=10, 95% bootstrap CIs) cross-checked against 180 seeds of live production
 behaviour · **Catalogue:** 28,436 CS papers.
 
-The project trains five recommenders and reports a leaderboard. That tells you
+The project trains four recommenders and a popularity baseline and reports a leaderboard. That tells you
 *which* model wins but not *why*, what each model is really doing, or whether the shipped configuration is
 the right one. Reading the evaluation output and the live system together
 surfaced three findings. The most important one led to a change that is now
