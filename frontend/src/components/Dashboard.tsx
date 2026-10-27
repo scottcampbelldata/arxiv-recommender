@@ -45,8 +45,8 @@ export function Dashboard() {
             <dd>OpenAlex records for computer science papers on arXiv since 2019, with their citation graph.</dd>
             <dt>The read</dt>
             <dd>
-              The hybrid leads on MAP@10, 0.199 against 0.149 for TF-IDF alone. The MiniLM sentence
-              transformer lost to TF-IDF. <a href={CASE_STUDY}>Read the case study</a>.
+              The tuned hybrid ranks first on MAP@10. The MiniLM sentence transformer lost to plain
+              TF-IDF. <a href={CASE_STUDY}>Read the case study</a>.
             </dd>
           </dl>
         </div>
@@ -69,7 +69,7 @@ export function Dashboard() {
               label="p95 latency · hybrid"
               value={hybrid ? formatMs(hybrid.latency_p95_ms) : "-"}
               unit="ms"
-              sub={<span>top-10, on the 28,436-paper evaluation set</span>}
+              sub={<span>top-10, on the evaluation set</span>}
             />
             <KpiCard
               label="Evaluation set"
