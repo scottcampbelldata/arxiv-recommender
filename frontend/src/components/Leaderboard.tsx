@@ -88,7 +88,7 @@ export function Leaderboard() {
                       />
                       <span className="text-text">{ALGO_LABEL[r.algorithm]}</span>
                       {isBest && (
-                        <span className="rounded-full border border-accent/40 px-1.5 py-0.5 text-[10px] uppercase tracking-eyebrow text-accent">
+                        <span className="rounded-sm border border-accent/40 px-1.5 py-0.5 text-[10px] uppercase tracking-eyebrow text-accent">
                           deployed
                         </span>
                       )}

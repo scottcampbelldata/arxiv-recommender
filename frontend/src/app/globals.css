@@ -2,6 +2,167 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Preprint type system, shared with scottcampbell.io. Fonts are self hosted
+   (SIL Open Font License, see /fonts). */
+@font-face {
+  font-family: "Libertinus Serif Display";
+  src: url("/fonts/libertinus-serif-display-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Source Serif 4";
+  src: url("/fonts/source-serif-4-text.woff2") format("woff2");
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Source Serif 4";
+  src: url("/fonts/source-serif-4-text-italic.woff2") format("woff2");
+  font-weight: 200 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Plex Mono";
+  src: url("/fonts/plex-mono-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-display: "Libertinus Serif Display", "Source Serif 4", Georgia, serif;
+  --font-sans: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-mono: "Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --pp-paper: #fdfdfc;
+  --pp-ink: #1b2a30;
+  --pp-sec: #4d5d63;
+  --pp-rule: #d9dfe0;
+  --pp-accent: #28566b;
+  --pp-accent-strong: #1e4759;
+  --pp-tint: #eef3f4;
+  --pp-panel: #ffffff;
+}
+
+/* Site bar: the same masthead as scottcampbell.io, with the project name. */
+.pp-bar {
+  border-bottom: 1px solid var(--pp-rule);
+  background: var(--pp-paper);
+  font-family: var(--font-sans);
+}
+.pp-bar-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+  min-height: 60px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 24px;
+}
+.pp-brand {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--pp-ink);
+  text-decoration: none;
+}
+.pp-brand:hover { color: var(--pp-accent); }
+.pp-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+  font-size: 16px;
+}
+.pp-nav a {
+  color: var(--pp-ink);
+  text-decoration: none;
+  padding: 10px 0;
+}
+.pp-nav a:hover { color: var(--pp-accent); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 600px) {
+  .pp-bar-inner { padding: 4px 20px; }
+  .pp-nav { gap: 0 18px; }
+  .pp-nav .pp-nav-wide { display: none; }
+}
+
+/* Consulting band and credit, as on the project pages. */
+.pp-consult {
+  background: var(--pp-tint);
+  border-top: 1px solid var(--pp-rule);
+  margin-top: 56px;
+  font-family: var(--font-sans);
+  color: var(--pp-ink);
+}
+.pp-consult-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 40px 24px 44px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px 40px;
+}
+.pp-consult h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 0 0 6px;
+  color: var(--pp-ink);
+}
+.pp-consult p {
+  margin: 0;
+  max-width: 620px;
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--pp-sec);
+}
+.pp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; font-size: 17px; }
+.pp-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 2px;
+  background: var(--pp-accent);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+.pp-btn:hover { background: var(--pp-accent-strong); }
+.pp-link { color: var(--pp-accent); text-decoration: underline; text-underline-offset: 3px; padding: 12px 0; }
+.pp-link:hover { color: var(--pp-accent-strong); }
+.pp-credit {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 18px 24px 28px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--pp-sec);
+}
+.pp-credit a { color: var(--pp-sec); text-decoration: underline; text-underline-offset: 3px; }
+.pp-credit a:hover { color: var(--pp-accent); }
+
+html.dark {
+  --pp-paper: #13191b;
+  --pp-ink: #e6ecee;
+  --pp-sec: #a6b4b9;
+  --pp-rule: #2b3539;
+  --pp-accent: #8cc1d6;
+  --pp-accent-strong: #b1d6e4;
+  --pp-tint: #1a2326;
+  --pp-panel: #182023;
+}
+html.dark .pp-btn, html.dark .pp-btn:hover { color: #0f1517; }
+
+
 /*
  * Design tokens. Colours are stored as space-separated RGB channels so Tailwind
  * can apply opacity via `rgb(var(--token) / <alpha-value>)`. Light is the
@@ -15,18 +176,19 @@
 :root {
   color-scheme: light;
 
-  --bg: 250 250 252;
-  --surface: 255 255 255;     /* #FFFFFF */
-  --surface-2: 242 241 245;
-  --border: 227 224 232;
-  --border-strong: 201 196 209;
-  --text: 22 21 27;
-  --muted: 98 93 106;
-  --faint: 112 107 118;
-  --accent: 89 71 164;
-  --accent-soft: 238 235 246;
+  /* Preprint palette shared with scottcampbell.io, as RGB channels. */
+  --bg: 253 253 252;          /* #fdfdfc */
+  --surface: 255 255 255;
+  --surface-2: 238 243 244;   /* #eef3f4 */
+  --border: 217 223 224;      /* #d9dfe0 */
+  --border-strong: 188 199 202;
+  --text: 27 42 48;           /* #1b2a30 */
+  --muted: 77 93 99;          /* #4d5d63 */
+  --faint: 95 111 117;        /* #5f6f75 */
+  --accent: 40 86 107;        /* #28566b */
+  --accent-soft: 227 234 236;
   --accent-fg: 255 255 255;
-  --ring: 111 90 185;
+  --ring: 40 86 107;
 
   /* Algorithm identity palette (categorical, distinct in both modes). */
   --algo-hybrid: 4 120 87;        /* emerald */
@@ -35,26 +197,26 @@
   --algo-als: 225 29 72;          /* rose */
   --algo-popularity: 100 116 139; /* slate */
 
-  --shadow-sm: 0 1px 2px rgb(17 21 28 / 0.04), 0 1px 3px rgb(17 21 28 / 0.06);
-  --shadow-md: 0 4px 12px rgb(17 21 28 / 0.06), 0 2px 4px rgb(17 21 28 / 0.04);
-  --shadow-pop: 0 12px 32px rgb(17 21 28 / 0.12), 0 2px 8px rgb(17 21 28 / 0.08);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-pop: 0 6px 18px rgb(27 42 48 / 0.10);
 }
 
 .dark {
   color-scheme: dark;
 
-  --bg: 16 16 21;
-  --surface: 25 24 32;
-  --surface-2: 34 32 43;
-  --border: 51 47 61;
-  --border-strong: 74 67 85;
-  --text: 236 234 240;
-  --muted: 168 161 176;
-  --faint: 117 110 128;
-  --accent: 186 173 233;
-  --accent-soft: 48 42 69;
-  --accent-fg: 16 16 21;
-  --ring: 186 173 233;
+  --bg: 19 25 27;             /* #13191b */
+  --surface: 24 32 35;        /* #182023 */
+  --surface-2: 26 35 38;      /* #1a2326 */
+  --border: 43 53 57;         /* #2b3539 */
+  --border-strong: 66 80 85;
+  --text: 230 236 238;        /* #e6ecee */
+  --muted: 166 180 185;       /* #a6b4b9 */
+  --faint: 142 157 162;
+  --accent: 140 193 214;      /* #8cc1d6 */
+  --accent-soft: 32 50 57;
+  --accent-fg: 15 21 23;
+  --ring: 140 193 214;
 
   --algo-hybrid: 52 211 153;      /* emerald-400 */
   --algo-neural: 251 191 36;      /* amber-400 */
@@ -62,9 +224,9 @@
   --algo-als: 251 113 133;        /* rose-400 */
   --algo-popularity: 148 163 184; /* slate-400 */
 
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
-  --shadow-md: 0 6px 18px rgb(0 0 0 / 0.35);
-  --shadow-pop: 0 16px 40px rgb(0 0 0 / 0.5), 0 2px 8px rgb(0 0 0 / 0.4);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-pop: 0 10px 28px rgb(0 0 0 / 0.45);
 }
 
 @layer base {
@@ -75,7 +237,9 @@
   }
   body {
     @apply bg-bg font-sans text-text;
-    font-feature-settings: "tnum" 1, "cv05" 1;
+    font-feature-settings: "tnum" 1;
+    font-size: 16px;
+    line-height: 1.55;
   }
   /* Theme transition: only colours, only when not reducing motion. */
   @media (prefers-reduced-motion: no-preference) {
@@ -90,7 +254,7 @@
   :focus-visible {
     outline: 2px solid rgb(var(--ring));
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: 2px;
   }
   * {
     scrollbar-width: thin;
@@ -118,3 +282,41 @@
     to { opacity: 1; transform: none; }
   }
 }
+
+/* The dashboard runs wider than a project page, so the frame follows it. */
+.pp-bar-inner, .pp-consult-inner, .pp-credit, .report-band-inner { max-width: 1320px; }
+.pp-consult { margin-top: 40px; }
+
+/* Title band and summary aside, as on the scottcampbell.io project pages. */
+.report-band { background: var(--pp-tint); border-bottom: 1px solid var(--pp-rule); }
+.report-band-inner { margin: 0 auto; padding: 28px 24px 26px; display: grid; gap: 22px; }
+@media (min-width: 901px) {
+  .report-band-inner { grid-template-columns: minmax(0, 1fr) 460px; gap: 56px; align-items: start; }
+}
+.report-kicker { font-style: italic; font-size: 16px; color: var(--pp-sec); }
+.report-band h1 {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(34px, 3.6vw, 46px); line-height: 1.06; letter-spacing: -0.01em;
+  color: var(--pp-ink); margin: 4px 0 0;
+}
+.report-lead { margin-top: 14px; max-width: 640px; font-size: 19px; line-height: 1.6; color: var(--pp-ink); }
+.glance { background: var(--pp-panel); border: 1px solid var(--pp-rule); border-radius: 2px; padding: 14px 20px 2px; margin: 0; }
+.glance dt { font-style: italic; font-size: 15px; color: var(--pp-sec); }
+.glance dd { margin: 1px 0 10px; font-size: 16px; line-height: 1.5; color: var(--pp-ink); }
+.glance a { color: var(--pp-accent); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 600px) {
+  .report-band-inner { padding: 24px 20px; gap: 18px; }
+  .report-band h1 { font-size: 32px; }
+  .report-lead { font-size: 17px; line-height: 1.55; }
+  /* On a phone the figures come first; the case study stays one tap away in the bar. */
+  .glance { display: none; }
+}
+
+/* Small caps labels read as italic sentence-case labels, as on the project pages. */
+.uppercase.tracking-eyebrow { text-transform: none; letter-spacing: 0; font-style: italic; font-size: 14px; color: rgb(var(--muted)); }
+tr.uppercase.tracking-eyebrow { font-style: normal; }
+/* Serif text needs a little more size than the old sans at the dense sizes. */
+.text-\[11px\] { font-size: 12.5px; }
+.text-\[10px\] { font-size: 12px; }
+.text-xs { font-size: 13px; line-height: 1.15rem; }
+main h1, main h2 { font-family: var(--font-display); font-weight: 400; }

@@ -12,7 +12,7 @@ export function RecCard({ item, rank, accent }: Props) {
   const { paper, score, reason } = item;
   const arxivLink = paper.arxiv_id ? `https://arxiv.org/abs/${paper.arxiv_id}` : paper.pdf_url;
   return (
-    <article className="themed group rounded-lg border border-border bg-surface p-3 shadow-sm transition-all hover:-translate-y-px hover:border-border-strong hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none">
+    <article className="themed group rounded-lg border border-border bg-surface p-3 shadow-sm transition-colors hover:border-border-strong motion-reduce:transition-none">
       <div className="flex items-start justify-between gap-2">
         <span
           className="font-mono text-[11px] font-medium tabular-nums"

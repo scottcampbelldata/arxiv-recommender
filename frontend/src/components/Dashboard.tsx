@@ -5,7 +5,8 @@ import { COLUMN_ALGORITHMS, LEADERBOARD_ORDER, ALGO_LABEL, algoColor } from "@/l
 import { LEADERBOARD } from "@/lib/leaderboard";
 import { formatLift, formatMs } from "@/lib/format";
 import { AlgoColumn } from "./AlgoColumn";
-import { AppHeader } from "./AppHeader";
+import { AppHeader, CASE_STUDY } from "./AppHeader";
+import { ConsultFooter } from "./SiteFrame";
 import { KpiCard } from "./KpiCard";
 import { Leaderboard } from "./Leaderboard";
 import { Panel } from "./Panel";
@@ -26,47 +27,33 @@ export function Dashboard() {
   return (
     <div className="themed min-h-screen bg-bg">
       <AppHeader />
-      <main className="mx-auto max-w-shell space-y-7 px-5 py-8 sm:py-10">
-        {/* Hero: text on the left, the headline metrics on the right, so the row
-            reads as one balanced unit instead of leaving the width empty. No
-            fade-in here: text that starts at opacity 0 is not counted as painted
-            until a later repaint, which pushed the largest paint past 2 s. */}
-        <section className="grid items-center gap-x-10 gap-y-8 lg:grid-cols-2">
+      <section className="report-band themed">
+        <div className="report-band-inner">
           <div>
-            <p className="text-[11px] uppercase tracking-eyebrow text-faint">
-              Paper recommender · OpenAlex computer-science corpus
+            <p className="report-kicker">Paper recommender, OpenAlex computer science corpus</p>
+            <h1>Find related arXiv CS papers, ranked by four recommenders</h1>
+            <p className="report-lead">
+              Pick an arXiv computer science paper from 2019 on. A tuned hybrid, a sentence
+              transformer, TF-IDF and a citation graph model each return their closest papers, side
+              by side, against a popularity baseline.
             </p>
-            <h1 className="mt-3 font-display text-[2.1rem] font-medium leading-[1.08] tracking-[-0.01em] text-text sm:text-[2.75rem]">
-              Find related arXiv CS papers,{" "}
-              <span className="italic text-accent">ranked by four recommenders</span>
-            </h1>
-            <p className="mt-4 text-[15px] leading-relaxed text-muted">
-              Pick any arXiv computer science paper from 2019 on. Four models return their
-              most-similar work, side by side: a tuned hybrid, a sentence-transformer, classic TF-IDF, and a citation-graph model, all
-              measured against a popularity baseline. Latency badges are live calls; the leaderboard
-              is held-out evaluation with bootstrap confidence intervals.
-            </p>
-
-            <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-sm">
-              <Stat label="MAP@10" value={hybrid ? hybrid["map@k"].toFixed(3) : "-"} />
-              <Dot />
-              <Stat label="vs popularity" value={mapLift ? formatLift(mapLift) : "-"} />
-              <Dot />
-              <Stat label="p95" value={hybrid ? `${formatMs(hybrid.latency_p95_ms)} ms` : "-"} />
-            </div>
-
-            <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted">
-              {LEADERBOARD_ORDER.map((key) => (
-                <li key={key} className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full" style={{ background: algoColor(key) }} aria-hidden />
-                  {ALGO_LABEL[key]}
-                  {key === "popularity" && <span className="text-faint">(baseline)</span>}
-                </li>
-              ))}
-            </ul>
           </div>
-
-          <div className="grid grid-cols-2 gap-3">
+          <dl className="glance">
+            <dt>The question</dt>
+            <dd>Given one paper, which method best finds the papers it actually cites?</dd>
+            <dt>The data</dt>
+            <dd>OpenAlex records for computer science papers on arXiv since 2019, with their citation graph.</dd>
+            <dt>The read</dt>
+            <dd>
+              The hybrid leads on MAP@10, 0.199 against 0.149 for TF-IDF alone. The MiniLM sentence
+              transformer lost to TF-IDF. <a href={CASE_STUDY}>Read the case study</a>.
+            </dd>
+          </dl>
+        </div>
+      </section>
+      <main className="mx-auto max-w-shell space-y-8 px-6 py-8 sm:py-10">
+        <section aria-label="Headline results" className="space-y-3">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <KpiCard
               label="Best MAP@10 · hybrid"
               value={hybrid ? hybrid["map@k"].toFixed(3) : "-"}
@@ -90,6 +77,15 @@ export function Dashboard() {
               sub={<span>CS arXiv papers since 2019</span>}
             />
           </div>
+          <ul className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted" aria-label="Algorithm colours">
+            {LEADERBOARD_ORDER.map((key) => (
+              <li key={key} className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full" style={{ background: algoColor(key) }} aria-hidden />
+                {ALGO_LABEL[key]}
+                {key === "popularity" && <span className="text-faint">(baseline)</span>}
+              </li>
+            ))}
+          </ul>
         </section>
 
         <div className="reveal" style={{ animationDelay: "120ms" }}>
@@ -99,7 +95,7 @@ export function Dashboard() {
             subtitle="Type a title or author. The FastAPI service does the lookup."
             right={
               <label className="flex items-center gap-2">
-                <span className="uppercase tracking-eyebrow text-faint">top-k</span>
+                <span className="uppercase tracking-eyebrow text-faint">Top-k</span>
                 <select
                   value={k}
                   onChange={(e) => setK(parseInt(e.target.value, 10))}
@@ -144,7 +140,7 @@ export function Dashboard() {
           <Leaderboard />
         </div>
 
-        <footer className="border-t border-border pt-6 text-xs leading-relaxed text-muted">
+        <div className="border-t border-border pt-6 text-xs leading-relaxed text-muted">
           <p>
             Data: <span className="font-mono">OpenAlex</span> computer-science works on arXiv, 2019
             onward, citation graph included. Models: popularity, TF-IDF, MiniLM sentence-transformer,
@@ -160,21 +156,9 @@ export function Dashboard() {
             </a>
             .
           </p>
-        </footer>
+        </div>
       </main>
+      <ConsultFooter caseStudy={CASE_STUDY} />
     </div>
   );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <span className="flex items-baseline gap-1.5">
-      <span className="text-text">{value}</span>
-      <span className="text-faint">{label}</span>
-    </span>
-  );
-}
-
-function Dot() {
-  return <span className="text-border-strong" aria-hidden>·</span>;
 }

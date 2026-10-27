@@ -46,7 +46,7 @@ export function AlgoColumn({ paper, k, algo, label, description }: Props) {
             <span className="h-2 w-2 rounded-full" style={{ background: color }} aria-hidden />
             {label}
           </h3>
-          <span className="rounded-full border border-border bg-surface px-2 py-0.5 font-mono text-[11px] tabular-nums text-muted">
+          <span className="rounded-sm border border-border bg-surface px-2 py-0.5 font-mono text-[11px] tabular-nums text-muted">
             {data ? `${formatMs(data.latency_ms)} ms` : loading ? "···" : "-"}
           </span>
         </div>
